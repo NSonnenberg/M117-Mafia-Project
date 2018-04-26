@@ -21,6 +21,6 @@ public class Game {
 
         Player hostPlayer = new Player(playerName);
 
-
+        playerMap.put(playerName, hostPlayer);
     }
 }
