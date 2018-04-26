@@ -26,11 +26,12 @@ public class Game {
         maxplayerid++;
     }
 
-    public void addPlayer(String name){
+    public Player addPlayer(String name){
         Player player = new Player(name, maxplayerid);
         playerMap.put(maxplayerid, player);
 
         maxplayerid++;
+        return player;
 
     }
 }

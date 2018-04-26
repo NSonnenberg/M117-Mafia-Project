@@ -18,7 +18,8 @@
         </activity>
         <activity android:name=".CreateGameActivity" />
         <activity android:name=".JoinGameActivity" />
-        <activity android:name=".GameListActivity"></activity>
+        <activity android:name=".GameListActivity" />
+        <activity android:name=".PlayerListActivity"></activity>
     </application>
 
 </manifest>

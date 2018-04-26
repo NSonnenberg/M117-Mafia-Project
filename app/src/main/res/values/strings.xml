@@ -6,4 +6,5 @@
     <string name="confirm">Confirm</string>
     <string name="game_room_name">Game Room Name</string>
     <string name="player_list">Player List</string>
+    <string name="game_list">Game List</string>
 </resources>

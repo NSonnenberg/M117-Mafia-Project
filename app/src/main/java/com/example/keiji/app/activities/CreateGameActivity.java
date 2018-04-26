@@ -18,8 +18,8 @@ public class CreateGameActivity extends AppCompatActivity {
 
     }
 
-    protected void gameList(View v) {
-        Intent gl_intent = new Intent(CreateGameActivity.this, GameListActivity.class);
+    protected void playerList(View v) {
+        Intent gl_intent = new Intent(CreateGameActivity.this, PlayerListActivity.class);
         /* String player_text = ((EditText)findViewById(R.id.cg_player_name_text)).getText().toString();
         String game_text = ((EditText)findViewById(R.id.cg_game_name_text)).getText().toString();
         Bundle bundle = new Bundle();
