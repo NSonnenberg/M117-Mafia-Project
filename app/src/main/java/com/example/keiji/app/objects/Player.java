@@ -1,5 +1,7 @@
 package com.example.keiji.app.objects;
 
+import java.util.HashMap;
+
 /**
  * Created by keiji on 4/22/2018.
  */
@@ -7,25 +9,23 @@ package com.example.keiji.app.objects;
 public class Player {
     private String name;
     private String role;
-    private HashMap<String, Player> playerMap;
+    private int id;
+    private HashMap<Integer, Player> playerMap;
 
-    public Player(String name)
+    public Player(String name, int id)
     {
         this.name = name;
+        this.id = id;
     }
 
-    public void setPlayerMap(HashMap<String, Player> playerMap)
+    public void setPlayerMap(HashMap<Integer, Player> playerMap)
     {
         this.playerMap = playerMap;
     }
 
-    public HashMap<String, Player> getPlayerMap()
+    public HashMap<Integer, Player> getPlayerMap()
     {
         return playerMap;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getRole()
@@ -35,5 +35,9 @@ public class Player {
 
     public String getName() {
         return name;
+    }
+
+    public int getId() {
+        return id;
     }
 }
