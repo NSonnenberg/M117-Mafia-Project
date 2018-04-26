@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">App</string>
+    <string name="create_game">Create Game</string>
+    <string name="join_game">Join Game</string>
+    <string name="player_name">Player Name</string>
+    <string name="confirm">Confirm</string>
+    <string name="game_room_name">Game Room Name</string>
+    <string name="player_list">Player List</string>
+</resources>
