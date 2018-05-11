@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 
 public class JoinGameActivity extends AppCompatActivity {
 
@@ -14,6 +15,9 @@ public class JoinGameActivity extends AppCompatActivity {
     }
 
     protected void gameList(View v) {
-        startActivity(new Intent(JoinGameActivity.this, GameListActivity.class));
+        Intent jg_intent = new Intent(JoinGameActivity.this, GameListActivity.class);
+        String pname = ((EditText)findViewById(R.id.jg_player_name_text)).getText().toString();
+        jg_intent.putExtra("player_name", pname);
+        startActivity(jg_intent);
     }
 }
