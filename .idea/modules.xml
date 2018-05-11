@@ -2,7 +2,14 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/M117-Mafia-Project.iml" filepath="$PROJECT_DIR$/M117-Mafia-Project.iml" />
+=======
+<<<<<<< HEAD
+      <module fileurl="file://$PROJECT_DIR$/Mafia.iml" filepath="$PROJECT_DIR$/Mafia.iml" />
+=======
+>>>>>>> c478e3945121a15b28d830119ec256d310e70a42
+>>>>>>> f138b9cb6d3cf535fac4e4d58a92b897849a4599
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
