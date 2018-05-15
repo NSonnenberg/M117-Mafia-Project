@@ -20,7 +20,6 @@
         <activity android:name=".JoinGameActivity" />
         <activity android:name=".GameListActivity" />
         <activity android:name=".PlayerListActivity"></activity>
-        <activity android:name=".WiFiDirectActivity"/>
     </application>
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
