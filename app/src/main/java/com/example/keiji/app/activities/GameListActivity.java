@@ -1,9 +1,12 @@
 package com.example.keiji.app.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.nfc.Tag;
 import android.os.Debug;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,6 +36,7 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
 
     ArrayList<String> game_list;
     String pname = "";
+    int REQUEST_LOCATION = 1;
 
     String serviceId = "com.example.keiji";
 
@@ -89,7 +93,11 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
         TextView textView = (TextView)findViewById(R.id.gl_player_name_view);
         textView.setText(pname);
 
-        startDiscovery();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
+        } else {
+            startDiscovery();
+        }
     }
 
     public void onItemClick(AdapterView<?> l, View v, int position, long id) {
@@ -105,17 +113,27 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
                 new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d("playerList","Successfully started discovery");
+                        Log.d("GameList","Successfully started discovery");
                     }
                 }
         ).addOnFailureListener(
                 new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d("PlayerList", "Failed to start advertising");
+                        Log.d("GameList", "Failed to start discovery", e);
                     }
                 }
         );
         Log.d("GameListActivity)", "started discovery");
+    }
+
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_LOCATION) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startDiscovery();
+            }
+        } else {
+            Log.d("GameList", "Guess we're not running the game");
+        }
     }
 }

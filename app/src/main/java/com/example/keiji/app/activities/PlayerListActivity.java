@@ -124,7 +124,7 @@ public class PlayerListActivity extends AppCompatActivity {
                 new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d("PlayerList", "Failed to start advertising");
+                        Log.d("PlayerList", "Failed to start advertising", e);
                     }
                 }
         );
