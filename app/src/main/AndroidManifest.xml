@@ -37,4 +37,16 @@
         <activity android:name=".MainGameNight"></activity>
     </application>
 
+<<<<<<< HEAD
+=======
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:required="true" android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:required="true" android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:required="true" android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:required="true" android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+
+>>>>>>> 69c2040a2bfb7a4b05b2187507f55b77ecb0d7c3
 </manifest>
