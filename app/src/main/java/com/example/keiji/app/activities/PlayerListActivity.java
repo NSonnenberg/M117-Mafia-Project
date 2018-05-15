@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -83,6 +84,7 @@ public class PlayerListActivity extends AppCompatActivity {
         textView2.setText(getIntent().getStringExtra("game_name"));
 
         gname = getIntent().getStringExtra("game_name");
+        startAdvertising();
     }
 
     private void broadcastGame() {
@@ -91,6 +93,6 @@ public class PlayerListActivity extends AppCompatActivity {
 
     private void startAdvertising() {
         connectionsClient.startAdvertising(gname, serviceId, connectionLifecycleCallback, new AdvertisingOptions(STRATEGY));
-
+        Log.d("startAdvertising", "Started Advertising");
     }
 }

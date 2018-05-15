@@ -39,6 +39,7 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
     private final EndpointDiscoveryCallback endpointDiscoveryCallback = new EndpointDiscoveryCallback() {
         @Override
         public void onEndpointFound(@NonNull String s, @NonNull DiscoveredEndpointInfo discoveredEndpointInfo) {
+            Log.d("GameListActivity", "Endpoint found, connecting to device");
             connectionsClient.requestConnection(pname, serviceId, connectionLifecycleCallback);
         }
 
@@ -83,6 +84,8 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
         pname = getIntent().getStringExtra("player_name");
         TextView textView = (TextView)findViewById(R.id.gl_player_name_view);
         textView.setText(pname);
+
+        startDiscovery();
     }
 
     public void onItemClick(AdapterView<?> l, View v, int position, long id) {
@@ -94,5 +97,6 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
 
     private void startDiscovery() {
         connectionsClient.startDiscovery(serviceId, endpointDiscoveryCallback, new DiscoveryOptions(STRATEGY));
+        Log.d("GameListActivity)", "started discovery");
     }
 }
