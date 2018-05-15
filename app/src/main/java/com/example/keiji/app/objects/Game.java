@@ -9,7 +9,7 @@ import java.util.HashMap;
 public class Game {
     private static int DAY = 0;
     private static int NIGHT = 1;
-    private static Integer maxplayerid = 1;
+    private static Integer maxplayerid = 0;
 
     private String gameName;
     private int numPlayers;
@@ -33,5 +33,9 @@ public class Game {
         maxplayerid++;
         return player;
 
+    }
+
+    public Player getPlayer(int id){
+        return playerMap.get(id);
     }
 }
