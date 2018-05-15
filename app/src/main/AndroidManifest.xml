@@ -2,6 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.keiji.app.activities">
 
+    <uses-permission
+        android:name="android.permission.ACCESS_COARSE_LOCATION"
+        android:required="true" />
+    <uses-permission
+        android:name="android.permission.ACCESS_WIFI_STATE"
+        android:required="true" />
+    <uses-permission
+        android:name="android.permission.CHANGE_WIFI_STATE"
+        android:required="true" />
+    <uses-permission
+        android:name="android.permission.INTERNET"
+        android:required="true" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,20 +32,9 @@
         <activity android:name=".CreateGameActivity" />
         <activity android:name=".JoinGameActivity" />
         <activity android:name=".GameListActivity" />
-        <activity android:name=".PlayerListActivity"></activity>
+        <activity android:name=".PlayerListActivity" />
+        <activity android:name=".MainGameDay" />
+        <activity android:name=".MainGameNight"></activity>
     </application>
-
-    <uses-permission
-        android:required="true"
-        android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission
-        android:required="true"
-        android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission
-        android:required="true"
-        android:name="android.permission.CHANGE_WIFI_STATE"/>
-    <uses-permission
-        android:required="true"
-        android:name="android.permission.INTERNET"/>
 
 </manifest>

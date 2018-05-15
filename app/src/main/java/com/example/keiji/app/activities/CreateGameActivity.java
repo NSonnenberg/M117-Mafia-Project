@@ -2,7 +2,6 @@ package com.example.keiji.app.activities;
 
 import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -21,12 +20,15 @@ public class CreateGameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_game);
     }
 
+    //move to PlayerListActivity on submit
     protected void playerList(View v) {
         Intent cg_intent = new Intent(CreateGameActivity.this, PlayerListActivity.class);
         String pname = ((EditText)findViewById(R.id.cg_player_name_text)).getText().toString();
         String gname = ((EditText)findViewById(R.id.cg_game_name_text)).getText().toString();
+        //Send data to next activity
         cg_intent.putExtra("player_name", pname);
         cg_intent.putExtra("game_name", gname);
+        cg_intent.putExtra("host", "yes");
         startActivity(cg_intent);
     }
 }

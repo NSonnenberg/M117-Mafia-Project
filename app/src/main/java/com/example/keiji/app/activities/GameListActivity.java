@@ -16,6 +16,7 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
    ArrayList<String> game_list;
    String pname = "";
 
+   //This activity is temporary.  Major changes need to be made so that only a single game is searched at a time
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +40,7 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
         Intent gl_intent = new Intent(GameListActivity.this, PlayerListActivity.class);
         gl_intent.putExtra("player_name", pname);
         gl_intent.putExtra("game_name", game_list.get(position));
+        gl_intent.putExtra("host", "no");
         startActivity(gl_intent);
     }
 }

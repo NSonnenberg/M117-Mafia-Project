@@ -7,4 +7,5 @@
     <string name="game_room_name">Game Room Name</string>
     <string name="player_list">Player List</string>
     <string name="game_list">Game List</string>
+    <string name="start_game">Start Game</string>
 </resources>
