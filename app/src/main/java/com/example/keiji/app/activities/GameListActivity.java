@@ -66,17 +66,18 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
                 public void onClick(android.content.DialogInterface dialog, int which) {
                     // continue with connection
                     connectionsClient.requestConnection(pname, endpointId, connectionLifecycleCallback).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                            Log.d(TAG, "Successfully requested connection");
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d(TAG, "Failed to request connection", e);
-                        }
-                    });
-                }
+
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "Successfully requested connection");
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "Failed to request connection", e);
+                            }
+                        });
+                    }
              })
             .setNegativeButton(android.R.string.no, new android.content.DialogInterface.OnClickListener() {
                 public void onClick(android.content.DialogInterface dialog, int which) {
