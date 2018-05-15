@@ -46,8 +46,11 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
     private final EndpointDiscoveryCallback endpointDiscoveryCallback = new EndpointDiscoveryCallback() {
         @Override
         public void onEndpointFound(@NonNull String s, @NonNull DiscoveredEndpointInfo discoveredEndpointInfo) {
+            connectionsClient.stopDiscovery();
+            Log.d(TAG, s);
+            Log.d(TAG, "Endpoint found with serviceId: " + discoveredEndpointInfo.getServiceId());
             Log.d("GameListActivity", "Endpoint found, connecting to device");
-            connectionsClient.requestConnection(pname, serviceId, connectionLifecycleCallback).addOnSuccessListener(new OnSuccessListener<Void>() {
+            connectionsClient.requestConnection(pname, s, connectionLifecycleCallback).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
                     Log.d(TAG, "Successfully requested connection");

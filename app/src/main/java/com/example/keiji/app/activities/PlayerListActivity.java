@@ -34,6 +34,10 @@ public class PlayerListActivity extends AppCompatActivity {
     String pname = "";
     String gname = "";
 
+    ArrayAdapter p_list_adapter;
+
+    static String TAG = "PlayerListActivity";
+
     String serviceId = "com.example.keiji";
 
     ConnectionsClient connectionsClient;
@@ -53,9 +57,12 @@ public class PlayerListActivity extends AppCompatActivity {
     private final ConnectionLifecycleCallback connectionLifecycleCallback = new ConnectionLifecycleCallback() {
         @Override
         public void onConnectionInitiated(@NonNull String s, @NonNull ConnectionInfo connectionInfo) {
+            connectionsClient.stopAdvertising();
             Log.d("PlayerList", "Connection initiated accepting connection");
             connectionsClient.acceptConnection(s, payloadCallback);
             player_list.add(connectionInfo.getEndpointName());
+            p_list_adapter.notifyDataSetChanged();
+            Log.d(TAG, "Accepted connection player_list is now " + player_list.get(1));
         }
 
         @Override
@@ -91,6 +98,8 @@ public class PlayerListActivity extends AppCompatActivity {
         //Display list of players
         ArrayAdapter adapter = new ArrayAdapter<String>(this,
                 R.layout.activity_list_element, player_list);
+
+        p_list_adapter = adapter;
 
         //Display current game name and player name
         ListView listView = (ListView) findViewById(R.id.pl_player_list);
