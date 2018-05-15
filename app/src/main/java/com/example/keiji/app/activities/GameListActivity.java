@@ -38,6 +38,8 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
     String pname = "";
     int REQUEST_LOCATION = 1;
     static String TAG = "GameList";
+    android.app.Activity curr_activity;
+
 
     String serviceId = "com.example.keiji";
 
@@ -51,22 +53,41 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
             Log.d(TAG, "Endpoint found with serviceId: " + discoveredEndpointInfo.getServiceId());
             Log.d("GameListActivity", "Endpoint found, connecting to device");
 
-            // make alert
-            // if alert returns YES
-            // do requestConnection
-            // o.w. startdiscovery again
+            final String endpointId = s;
+            android.app.AlertDialog.Builder builder;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                builder = new android.app.AlertDialog.Builder(curr_activity, android.R.style.Theme_Material_Dialog_Alert);
+            } else {
+                builder = new android.app.AlertDialog.Builder(curr_activity);
+            }
+            builder.setTitle("Make Connection")
+            .setMessage("Do you want to connect to this player?")
+            .setPositiveButton(android.R.string.yes, new android.content.DialogInterface.OnClickListener() {
+                public void onClick(android.content.DialogInterface dialog, int which) {
+                    // continue with connection
+                    connectionsClient.requestConnection(pname, endpointId, connectionLifecycleCallback).addOnSuccessListener(new OnSuccessListener<Void>() {
 
-            connectionsClient.requestConnection(pname, s, connectionLifecycleCallback).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Log.d(TAG, "Successfully requested connection");
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "Successfully requested connection");
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "Failed to request connection", e);
+                            }
+                        });
+                    }
+             })
+            .setNegativeButton(android.R.string.no, new android.content.DialogInterface.OnClickListener() {
+                public void onClick(android.content.DialogInterface dialog, int which) {
+                    // continue with discovery
+                    startDiscovery();
                 }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.d(TAG, "Failed to request connection", e);
-                }
-            });
+             })
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .show();
+
         }
 
         @Override
@@ -99,6 +120,7 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_list);
 
+        curr_activity = this;
         connectionsClient = Nearby.getConnectionsClient(this);
         game_list = new ArrayList<>();
         game_list.add("test1");
