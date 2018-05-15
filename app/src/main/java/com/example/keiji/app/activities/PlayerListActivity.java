@@ -75,6 +75,7 @@ public class PlayerListActivity extends AppCompatActivity {
         Button button = (Button) findViewById(R.id.pl_start_game_button);
         button.setVisibility(View.GONE);
 
+        connectionsClient = Nearby.getConnectionsClient(this);
         //Create game object only for host
         pname = getIntent().getStringExtra("player_name");
         gname = getIntent().getStringExtra("game_name"); //TO-DO: Joining players should have gname synced to the host
@@ -103,7 +104,6 @@ public class PlayerListActivity extends AppCompatActivity {
     //Move to MainGameDay Activity
     protected void startGame(View v) {
         startActivity(new Intent(PlayerListActivity.this, MainGameDay.class));
-        connectionsClient = Nearby.getConnectionsClient(this);
     }
 
     private void broadcastGame() {

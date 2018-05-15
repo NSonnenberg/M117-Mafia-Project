@@ -73,6 +73,7 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_list);
 
+        connectionsClient = Nearby.getConnectionsClient(this);
         game_list = new ArrayList<>();
         game_list.add("test1");
         ArrayAdapter adapter = new ArrayAdapter<String>(this,
