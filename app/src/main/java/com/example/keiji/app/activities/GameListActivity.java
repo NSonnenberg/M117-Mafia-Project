@@ -50,6 +50,12 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
             Log.d(TAG, s);
             Log.d(TAG, "Endpoint found with serviceId: " + discoveredEndpointInfo.getServiceId());
             Log.d("GameListActivity", "Endpoint found, connecting to device");
+
+            // make alert
+            // if alert returns YES
+            // do requestConnection
+            // o.w. startdiscovery again
+
             connectionsClient.requestConnection(pname, s, connectionLifecycleCallback).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {

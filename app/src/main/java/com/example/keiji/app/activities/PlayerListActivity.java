@@ -115,6 +115,7 @@ public class PlayerListActivity extends AppCompatActivity {
 
     //Move to MainGameDay Activity
     protected void startGame(View v) {
+        connectionsClient.stopAdvertising();
         startActivity(new Intent(PlayerListActivity.this, MainGameDay.class));
     }
 
