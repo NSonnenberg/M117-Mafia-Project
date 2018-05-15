@@ -37,6 +37,7 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
     ArrayList<String> game_list;
     String pname = "";
     int REQUEST_LOCATION = 1;
+    static String TAG = "GameList";
 
     String serviceId = "com.example.keiji";
 
@@ -46,7 +47,17 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
         @Override
         public void onEndpointFound(@NonNull String s, @NonNull DiscoveredEndpointInfo discoveredEndpointInfo) {
             Log.d("GameListActivity", "Endpoint found, connecting to device");
-            connectionsClient.requestConnection(pname, serviceId, connectionLifecycleCallback);
+            connectionsClient.requestConnection(pname, serviceId, connectionLifecycleCallback).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d(TAG, "Successfully requested connection");
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "Failed to request connection", e);
+                }
+            });
         }
 
         @Override
