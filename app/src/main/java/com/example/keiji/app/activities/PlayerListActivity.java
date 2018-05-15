@@ -10,9 +10,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-<<<<<<< HEAD
 import com.example.keiji.app.objects.Game;
-=======
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.AdvertisingOptions;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
@@ -23,19 +21,13 @@ import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.google.android.gms.nearby.connection.Strategy;
->>>>>>> 69c2040a2bfb7a4b05b2187507f55b77ecb0d7c3
 
 import java.util.ArrayList;
 
 public class PlayerListActivity extends AppCompatActivity {
 
-<<<<<<< HEAD
     ArrayList<String> player_list = new ArrayList<>();
-=======
     private static final Strategy STRATEGY = Strategy.P2P_STAR;
-
-    ArrayList<String> player_list;
->>>>>>> 69c2040a2bfb7a4b05b2187507f55b77ecb0d7c3
     String pname = "";
     String gname = "";
 
@@ -95,7 +87,6 @@ public class PlayerListActivity extends AppCompatActivity {
         ArrayAdapter adapter = new ArrayAdapter<String>(this,
                 R.layout.activity_list_element, player_list);
 
-<<<<<<< HEAD
         //Display current game name and player name
         ListView listView = (ListView)findViewById(R.id.pl_player_list);
         TextView textView = (TextView)findViewById(R.id.pl_player_name_view);
@@ -108,17 +99,7 @@ public class PlayerListActivity extends AppCompatActivity {
     //Move to MainGameDay Activity
     protected void startGame(View v) {
         startActivity(new Intent(PlayerListActivity.this, MainGameDay.class));
-=======
         connectionsClient = Nearby.getConnectionsClient(this);
-
-        ListView listView = (ListView) findViewById(R.id.pl_player_list);
-        TextView textView = (TextView)findViewById(R.id.pl_player_name_view);
-        TextView textView2 = (TextView)findViewById(R.id.pl_game_room_name_view);
-        listView.setAdapter(adapter);
-        textView.setText(getIntent().getStringExtra("player_name"));
-        textView2.setText(getIntent().getStringExtra("game_name"));
-
-        gname = getIntent().getStringExtra("game_name");
     }
 
     private void broadcastGame() {
@@ -127,7 +108,5 @@ public class PlayerListActivity extends AppCompatActivity {
 
     private void startAdvertising() {
         connectionsClient.startAdvertising(gname, serviceId, connectionLifecycleCallback, new AdvertisingOptions(STRATEGY));
-
->>>>>>> 69c2040a2bfb7a4b05b2187507f55b77ecb0d7c3
     }
 }
