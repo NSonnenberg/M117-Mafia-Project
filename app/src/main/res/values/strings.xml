@@ -8,4 +8,18 @@
     <string name="player_list">Player List</string>
     <string name="game_list">Game List</string>
     <string name="start_game">Start Game</string>
+    <string name="rules_general">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        Nulla pellentesque eu leo fermentum ullamcorper. Aenean venenatis turpis velit, at facilisis
+        sem eleifend ac. Aliquam ullamcorper mi ut sem sollicitudin consectetur. Proin sollicitudin, d
+        ui a fringilla malesuada, nisl augue pharetra tortor, auctor laoreet ante metus facilisis felis.
+        Phasellus malesuada iaculis varius. Nam ut felis erat. Ut convallis nulla scelerisque venenatis f
+        inibus. Quisque sed varius est, vitae scelerisque nulla. Nullam lacinia metus dui, eget ultricies
+        urna rhoncus vitae.
+
+        Nullam molestie leo sollicitudin velit suscipit, eu ornare justo aliquam. Fusce sag
+        ittis erat id mi rhoncus ornare. Nunc bibendum posuere risus vitae auctor. Integer et nul
+        la sed lacus porta porta id non enim. Duis interdum pharetra urna, eu euismod risus facilisis
+        sed. Fusce imperdiet lorem neque, id congue ipsum molestie at. Proin laoreet neque in augue dapibu
+        s, sit amet fringilla purus faucibus.</string>
 </resources>
+

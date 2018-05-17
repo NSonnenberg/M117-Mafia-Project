@@ -2,8 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.keiji.app.activities">
 
-    <uses-permission
-        android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission
         android:name="android.permission.ACCESS_WIFI_STATE"
         android:required="true" />
@@ -33,12 +32,17 @@
         <activity android:name=".GameListActivity" />
         <activity android:name=".PlayerListActivity" />
         <activity android:name=".MainGameDay" />
+        <activity
+            android:name=".RulesActivity"
+            android:exported="true" />
         <activity android:name=".MainGameNight"></activity>
     </application>
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:required="true" android:name="android.permission.INTERNET"/>
+    <uses-permission
+        android:name="android.permission.INTERNET"
+        android:required="true" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
 
