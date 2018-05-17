@@ -27,6 +27,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme">
         <activity android:name=".MainActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -42,6 +43,22 @@
         <activity android:name=".MainGameNight" android:screenOrientation="portrait"/>
         <activity android:name=".MainGameActivity" android:screenOrientation="portrait"/>
         <activity android:name=".YouWinActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".CreateGameActivity" />
+        <activity android:name=".JoinGameActivity" />
+        <activity android:name=".GameListActivity" />
+        <activity android:name=".PlayerListActivity" />
+        <activity android:name=".MainGameDay" />
+        <activity
+            android:name=".RulesActivity"
+            android:exported="true" />
+        <activity android:name=".MainGameNight"></activity>
     </application>
 
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission
+        android:name="android.permission.INTERNET"
+        android:required="true" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
 </manifest>
