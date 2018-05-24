@@ -24,6 +24,7 @@ public class MainGameDay extends AppCompatActivity {
     private Game game;
     private boolean host;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
