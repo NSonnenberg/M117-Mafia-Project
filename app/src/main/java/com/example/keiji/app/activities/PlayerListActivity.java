@@ -72,7 +72,7 @@ public class PlayerListActivity extends AppCompatActivity {
 
         @Override
         public void onConnectionResult(@NonNull String s, @NonNull ConnectionResolution connectionResolution) {
-            connectionsClient.stopAdvertising();
+            Log.d(TAG, "Connection established");
         }
 
         @Override
