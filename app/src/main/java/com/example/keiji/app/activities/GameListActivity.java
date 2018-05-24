@@ -47,13 +47,13 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
 
     private final EndpointDiscoveryCallback endpointDiscoveryCallback = new EndpointDiscoveryCallback() {
         @Override
-        public void onEndpointFound(@NonNull String s, @NonNull DiscoveredEndpointInfo discoveredEndpointInfo) {
+        public void onEndpointFound(@NonNull String id, @NonNull DiscoveredEndpointInfo discoveredEndpointInfo) {
             connectionsClient.stopDiscovery();
-            Log.d(TAG, s);
+            Log.d(TAG, id);
             Log.d(TAG, "Endpoint found with serviceId: " + discoveredEndpointInfo.getServiceId());
             Log.d("GameListActivity", "Endpoint found, connecting to device");
 
-            final String endpointId = s;
+            final String endpointId = id;
             android.app.AlertDialog.Builder builder;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 builder = new android.app.AlertDialog.Builder(curr_activity, android.R.style.Theme_Material_Dialog_Alert);
