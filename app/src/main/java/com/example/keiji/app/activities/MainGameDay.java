@@ -22,6 +22,7 @@ public class MainGameDay extends AppCompatActivity {
 
     private Player player;
     private Game game;
+    private boolean host;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +51,9 @@ public class MainGameDay extends AppCompatActivity {
         countdownButtonReset.setVisibility(View.GONE);
 
         //enable countdown timer and buttons for host only
-        player = (Player)getIntent().getSerializableExtra("Player");
         game = (Game)getIntent().getSerializableExtra("Game");
-        if(game.getPlayer(0).equals(player)) {
+        host = getIntent().getBooleanExtra("host", false);
+        if(host) {
             countdownButton.setVisibility(View.VISIBLE);
             countdownButtonReset.setVisibility(View.VISIBLE);
             countdownText.setVisibility(View.VISIBLE);
