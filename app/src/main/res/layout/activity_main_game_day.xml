@@ -23,7 +23,7 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/countdown_text"
         android:layout_marginStart="90dp"
-        android:text="start" />
+        android:text="@string/start" />
 
     <Button
         android:id="@+id/countdown_button_reset"
@@ -32,6 +32,27 @@
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/countdown_text"
         android:layout_marginEnd="91dp"
-        android:text="reset" />
+        android:text="@string/reset" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="37dp"
+        android:layout_toStartOf="@+id/countdown_text"
+        android:text="@string/role"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textView8"
+        android:layout_alignBottom="@+id/textView8"
+        android:layout_marginStart="16dp"
+        android:layout_toEndOf="@+id/countdown_text"
+        android:text="TextView"
+        android:textSize="18sp" />
 
 </RelativeLayout>

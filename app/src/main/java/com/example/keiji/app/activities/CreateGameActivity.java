@@ -28,7 +28,7 @@ public class CreateGameActivity extends AppCompatActivity {
         //Send data to next activity
         cg_intent.putExtra("player_name", pname);
         cg_intent.putExtra("game_name", gname);
-        cg_intent.putExtra("host", "yes");
+        cg_intent.putExtra("host", true);
         startActivity(cg_intent);
     }
 }

@@ -105,6 +105,7 @@ public class SearchGameActivity extends AppCompatActivity {
             connectionsClient.stopDiscovery();
             Intent sg_intent = new Intent(SearchGameActivity.this, PlayerListActivity.class);
             sg_intent.putExtra("player_name", pname);
+            sg_intent.putExtra("host", false);
             startActivity(sg_intent);
         }
 

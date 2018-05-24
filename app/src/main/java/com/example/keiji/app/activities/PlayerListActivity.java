@@ -36,6 +36,7 @@ public class PlayerListActivity extends AppCompatActivity {
     private static final Strategy STRATEGY = Strategy.P2P_STAR;
     String pname = "";
     String gname = "";
+    boolean host = false;
     Game game;
 
     ArrayAdapter p_list_adapter;
@@ -93,8 +94,10 @@ public class PlayerListActivity extends AppCompatActivity {
 
         pname = getIntent().getStringExtra("player_name");
         gname = getIntent().getStringExtra("game_name"); //TO-DO: Joining players should have gname synced to the host
+        host = getIntent().getBooleanExtra("host", false);
+
         //Create game object and player object only for host
-        if (getIntent().getStringExtra("host").equals("yes")) {
+        if (host) {
             game = new Game(gname, pname);
             player = new Player(pname, 0);
             player_list.add(pname);
@@ -128,10 +131,11 @@ public class PlayerListActivity extends AppCompatActivity {
     protected void startGame(View v) {
         connectionsClient.stopAdvertising();
         Intent pl_intent = new Intent(PlayerListActivity.this, MainGameDay.class);
-        if (getIntent().getStringExtra("host").equals("yes")) {
+        boolean host = getIntent().getBooleanExtra("host", false);
+        if (host) {
             pl_intent.putExtra("Game", (Serializable)game);
         }
-        pl_intent.putExtra("Player", (Serializable)player);
+        pl_intent.putExtra("host", host);
         startActivity(pl_intent);
     }
 

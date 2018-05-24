@@ -44,12 +44,4 @@ public class Player implements Serializable {
     }
 
     public int getConnectId() {return connectid; }
-
-    @Override
-    public boolean equals (Object obj) {
-        Player player = (Player)obj;
-        if(this.name.equals(player.name)&&this.id == player.id)
-            return true;
-        else return false;
-    }
 }
