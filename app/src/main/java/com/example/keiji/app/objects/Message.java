@@ -1,6 +1,8 @@
 package com.example.keiji.app.objects;
 
-public class Message {
+import java.io.Serializable;
+
+public class Message implements Serializable {
     private String message;
     private String type;
 
