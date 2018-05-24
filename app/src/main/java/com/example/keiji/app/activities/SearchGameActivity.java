@@ -3,8 +3,6 @@ package com.example.keiji.app.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.nfc.Tag;
-import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -30,14 +28,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 
-public class GameListActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class SearchGameActivity extends AppCompatActivity {
 
     private static final Strategy STRATEGY = Strategy.P2P_STAR;
 
-    ArrayList<String> game_list;
     String pname = "";
     int REQUEST_LOCATION = 1;
-    static String TAG = "GameList";
+    static String TAG = "SearchGame";
     android.app.Activity curr_activity;
 
 
@@ -51,7 +48,7 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
             connectionsClient.stopDiscovery();
             Log.d(TAG, id);
             Log.d(TAG, "Endpoint found with serviceId: " + discoveredEndpointInfo.getServiceId());
-            Log.d("GameListActivity", "Endpoint found, connecting to device");
+            Log.d("SearchGameActivity", "Endpoint found, connecting to device");
 
             final String endpointId = id;
             android.app.AlertDialog.Builder builder;
@@ -104,8 +101,11 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
 
         @Override
         public void onConnectionResult(@NonNull String s, @NonNull ConnectionResolution connectionResolution) {
-            connectionsClient.stopDiscovery();
             Log.d("tag","connection successful");
+            connectionsClient.stopDiscovery();
+            Intent sg_intent = new Intent(SearchGameActivity.this, PlayerListActivity.class);
+            sg_intent.putExtra("player_name", pname);
+            startActivity(sg_intent);
         }
 
         @Override
@@ -114,22 +114,13 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
         }
     };
 
-   //This activity is temporary.  Major changes need to be made so that only a single game is searched at a time
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game_list);
+        setContentView(R.layout.activity_search_game);
 
         curr_activity = this;
         connectionsClient = Nearby.getConnectionsClient(this);
-        game_list = new ArrayList<>();
-        game_list.add("test1");
-        ArrayAdapter adapter = new ArrayAdapter<String>(this,
-                R.layout.activity_list_element, game_list);
-
-        ListView listView = (ListView)findViewById(R.id.gl_game_list);
-        listView.setOnItemClickListener(this);
-        listView.setAdapter(adapter);
 
         pname = getIntent().getStringExtra("player_name");
         TextView textView = (TextView)findViewById(R.id.gl_player_name_view);
@@ -142,31 +133,23 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
         }
     }
 
-    public void onItemClick(AdapterView<?> l, View v, int position, long id) {
-        Intent gl_intent = new Intent(GameListActivity.this, PlayerListActivity.class);
-        gl_intent.putExtra("player_name", pname);
-        gl_intent.putExtra("game_name", game_list.get(position));
-        gl_intent.putExtra("host", "no");
-        startActivity(gl_intent);
-    }
-
     private void startDiscovery() {
         connectionsClient.startDiscovery(serviceId, endpointDiscoveryCallback, new DiscoveryOptions(STRATEGY)).addOnSuccessListener(
                 new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d("GameList","Successfully started discovery");
+                        Log.d("SearchGame","Successfully started discovery");
                     }
                 }
         ).addOnFailureListener(
                 new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d("GameList", "Failed to start discovery", e);
+                        Log.d("SearchGame", "Failed to start discovery", e);
                     }
                 }
         );
-        Log.d("GameListActivity)", "started discovery");
+        Log.d("SearchGameActivity)", "started discovery");
     }
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -175,7 +158,7 @@ public class GameListActivity extends AppCompatActivity implements AdapterView.O
                 startDiscovery();
             }
         } else {
-            Log.d("GameList", "Guess we're not running the game");
+            Log.d("SearchGame", "Guess we're not running the game");
         }
     }
 }

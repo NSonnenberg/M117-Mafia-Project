@@ -1,16 +1,18 @@
 package com.example.keiji.app.objects;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
  * Created by keiji on 4/22/2018.
  */
 
-public class Player {
+public class Player implements Serializable {
     private String name;
     private String role;
     private int id;
     private HashMap<Integer, Player> playerMap;
+    private int connectid;
 
     public Player(String name, int id)
     {
@@ -39,5 +41,15 @@ public class Player {
 
     public int getId() {
         return id;
+    }
+
+    public int getConnectId() {return connectid; }
+
+    @Override
+    public boolean equals (Object obj) {
+        Player player = (Player)obj;
+        if(this.name.equals(player.name)&&this.id == player.id)
+            return true;
+        else return false;
     }
 }

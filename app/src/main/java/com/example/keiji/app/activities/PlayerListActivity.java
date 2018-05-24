@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.keiji.app.objects.Game;
+import com.example.keiji.app.objects.Player;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.AdvertisingOptions;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
@@ -25,14 +26,17 @@ import com.google.android.gms.nearby.connection.Strategy;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class PlayerListActivity extends AppCompatActivity {
 
     ArrayList<String> player_list = new ArrayList<>();
+    Player player;
     private static final Strategy STRATEGY = Strategy.P2P_STAR;
     String pname = "";
     String gname = "";
+    Game game;
 
     ArrayAdapter p_list_adapter;
 
@@ -86,13 +90,20 @@ public class PlayerListActivity extends AppCompatActivity {
         button.setVisibility(View.GONE);
 
         connectionsClient = Nearby.getConnectionsClient(this);
-        //Create game object only for host
+
         pname = getIntent().getStringExtra("player_name");
         gname = getIntent().getStringExtra("game_name"); //TO-DO: Joining players should have gname synced to the host
+        //Create game object and player object only for host
         if (getIntent().getStringExtra("host").equals("yes")) {
-            Game game = new Game(gname, pname);
+            game = new Game(gname, pname);
+            player = new Player(pname, 0);
             player_list.add(pname);
             button.setVisibility(View.VISIBLE); //enables start game button
+        }
+        //TODO: Else create player object
+        else {
+            player = new Player(pname, 1);
+            player_list.add(pname);
         }
 
         //Display list of players
@@ -116,7 +127,12 @@ public class PlayerListActivity extends AppCompatActivity {
     //Move to MainGameDay Activity
     protected void startGame(View v) {
         connectionsClient.stopAdvertising();
-        startActivity(new Intent(PlayerListActivity.this, MainGameDay.class));
+        Intent pl_intent = new Intent(PlayerListActivity.this, MainGameDay.class);
+        if (getIntent().getStringExtra("host").equals("yes")) {
+            pl_intent.putExtra("Game", (Serializable)game);
+        }
+        pl_intent.putExtra("Player", (Serializable)player);
+        startActivity(pl_intent);
     }
 
     private void broadcastGame() {

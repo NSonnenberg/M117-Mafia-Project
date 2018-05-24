@@ -7,6 +7,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.keiji.app.objects.Game;
+import com.example.keiji.app.objects.Player;
+
 public class MainGameDay extends AppCompatActivity {
 
     private TextView countdownText;
@@ -17,32 +20,43 @@ public class MainGameDay extends AppCompatActivity {
     private long timeLeftInMilliseconds = 300000;//5 minutes
     private boolean timerRunning;
 
+    private Player player;
+    private Game game;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_game_day);
         countdownText = findViewById(R.id.countdown_text);
         countdownButton = findViewById(R.id.countdown_button);
-
-        countdownButton.setOnClickListener(new View.OnClickListener(){
+        countdownButtonReset = findViewById(R.id.countdown_button_reset);
+        countdownButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 startStop();
 
             }
 
         });
-
-        countdownButtonReset = findViewById(R.id.countdown_button_reset);
-
-        countdownButtonReset.setOnClickListener(new View.OnClickListener(){
+        countdownButtonReset.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 resetTimer();
-
             }
 
         });
+        countdownText.setVisibility(View.GONE);
+        countdownButton.setVisibility(View.GONE);
+        countdownButtonReset.setVisibility(View.GONE);
+
+        //enable countdown timer and buttons for host only
+        player = (Player)getIntent().getSerializableExtra("Player");
+        game = (Game)getIntent().getSerializableExtra("Game");
+        if(game.getPlayer(0).equals(player)) {
+            countdownButton.setVisibility(View.VISIBLE);
+            countdownButtonReset.setVisibility(View.VISIBLE);
+            countdownText.setVisibility(View.VISIBLE);
+        }
 
     }
     public void startStop() {
