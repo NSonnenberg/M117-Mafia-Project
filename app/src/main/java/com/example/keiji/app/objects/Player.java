@@ -1,7 +1,6 @@
 package com.example.keiji.app.objects;
 
 import java.io.Serializable;
-import java.util.HashMap;
 
 /**
  * Created by keiji on 4/22/2018.
@@ -11,23 +10,13 @@ public class Player implements Serializable {
     private String name;
     private String role;
     private int id;
-    private HashMap<Integer, Player> playerMap;
-    private int connectid;
+    private String connectid;
 
-    public Player(String name, int id)
+    public Player(String name, int id, String connectId)
     {
         this.name = name;
         this.id = id;
-    }
-
-    public void setPlayerMap(HashMap<Integer, Player> playerMap)
-    {
-        this.playerMap = playerMap;
-    }
-
-    public HashMap<Integer, Player> getPlayerMap()
-    {
-        return playerMap;
+        this.connectid = connectId;
     }
 
     public String getRole()
@@ -43,5 +32,5 @@ public class Player implements Serializable {
         return id;
     }
 
-    public int getConnectId() {return connectid; }
+    public String getConnectId() { return connectid; }
 }
