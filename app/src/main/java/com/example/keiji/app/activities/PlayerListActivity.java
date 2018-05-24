@@ -62,7 +62,6 @@ public class PlayerListActivity extends AppCompatActivity {
     private final ConnectionLifecycleCallback connectionLifecycleCallback = new ConnectionLifecycleCallback() {
         @Override
         public void onConnectionInitiated(@NonNull String id, @NonNull ConnectionInfo connectionInfo) {
-            connectionsClient.stopAdvertising();
             Log.d("PlayerList", "Connection initiated accepting connection");
             connectionsClient.acceptConnection(id, payloadCallback);
             player_list.add(connectionInfo.getEndpointName());
