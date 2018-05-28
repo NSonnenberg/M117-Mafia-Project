@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.keiji.app.objects.Game;
+import com.example.keiji.app.objects.Player;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.AdvertisingOptions;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
@@ -25,14 +26,23 @@ import com.google.android.gms.nearby.connection.Strategy;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PlayerListActivity extends AppCompatActivity {
 
-    ArrayList<String> player_list = new ArrayList<>();
+    List<String> player_list = new ArrayList<>();
+    Map<String, Player> player_map = new HashMap<String, Player>();
+    Player player;
+    int curr_id = 1;
     private static final Strategy STRATEGY = Strategy.P2P_STAR;
     String pname = "";
     String gname = "";
+    boolean host = false;
+    Game game;
 
     ArrayAdapter p_list_adapter;
 
@@ -56,18 +66,19 @@ public class PlayerListActivity extends AppCompatActivity {
 
     private final ConnectionLifecycleCallback connectionLifecycleCallback = new ConnectionLifecycleCallback() {
         @Override
-        public void onConnectionInitiated(@NonNull String s, @NonNull ConnectionInfo connectionInfo) {
-            connectionsClient.stopAdvertising();
+        public void onConnectionInitiated(@NonNull String id, @NonNull ConnectionInfo connectionInfo) {
             Log.d("PlayerList", "Connection initiated accepting connection");
-            connectionsClient.acceptConnection(s, payloadCallback);
+            connectionsClient.acceptConnection(id, payloadCallback);
             player_list.add(connectionInfo.getEndpointName());
+            player_map.put(connectionInfo.getEndpointName(), new Player(connectionInfo.getEndpointName(), curr_id, id));
+            curr_id++;
             p_list_adapter.notifyDataSetChanged();
             Log.d(TAG, "Accepted connection player_list is now " + player_list.get(1));
         }
 
         @Override
         public void onConnectionResult(@NonNull String s, @NonNull ConnectionResolution connectionResolution) {
-            connectionsClient.stopAdvertising();
+            Log.d(TAG, "Connection established");
         }
 
         @Override
@@ -86,12 +97,17 @@ public class PlayerListActivity extends AppCompatActivity {
         button.setVisibility(View.GONE);
 
         connectionsClient = Nearby.getConnectionsClient(this);
-        //Create game object only for host
+
         pname = getIntent().getStringExtra("player_name");
         gname = getIntent().getStringExtra("game_name"); //TO-DO: Joining players should have gname synced to the host
-        if (getIntent().getStringExtra("host").equals("yes")) {
-            Game game = new Game(gname, pname);
+        host = getIntent().getBooleanExtra("host", false);
+
+        //Create game object and player object only for host
+        if (host) {
+            game = new Game(gname, pname);
+            player = new Player(pname, 0, "");
             player_list.add(pname);
+            player_map.put(pname, player);
             button.setVisibility(View.VISIBLE); //enables start game button
         }
 
@@ -116,7 +132,13 @@ public class PlayerListActivity extends AppCompatActivity {
     //Move to MainGameDay Activity
     protected void startGame(View v) {
         connectionsClient.stopAdvertising();
-        startActivity(new Intent(PlayerListActivity.this, MainGameDay.class));
+        Intent pl_intent = new Intent(PlayerListActivity.this, MainGameDay.class);
+        boolean host = getIntent().getBooleanExtra("host", false);
+        if (host) {
+            pl_intent.putExtra("Game", (Serializable)game);
+        }
+        pl_intent.putExtra("host", host);
+        startActivity(pl_intent);
     }
 
     private void broadcastGame() {

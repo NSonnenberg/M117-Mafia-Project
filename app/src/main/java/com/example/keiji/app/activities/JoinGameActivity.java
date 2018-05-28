@@ -16,7 +16,7 @@ public class JoinGameActivity extends AppCompatActivity {
 
     //Move to GameListActivity on submit
     protected void gameList(View v) {
-        Intent jg_intent = new Intent(JoinGameActivity.this, GameListActivity.class);
+        Intent jg_intent = new Intent(JoinGameActivity.this, SearchGameActivity.class);
         String pname = ((EditText)findViewById(R.id.jg_player_name_text)).getText().toString();
         //Send data to next activity
         jg_intent.putExtra("player_name", pname);
