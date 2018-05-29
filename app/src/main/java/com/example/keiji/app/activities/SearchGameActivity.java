@@ -14,6 +14,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.keiji.app.objects.Message;
+import com.example.keiji.app.utilities.SerializationHandler;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
 import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback;
@@ -29,6 +31,7 @@ import com.google.android.gms.nearby.connection.Strategy;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class SearchGameActivity extends AppCompatActivity {
@@ -40,15 +43,22 @@ public class SearchGameActivity extends AppCompatActivity {
     static String TAG = "SearchGame";
     android.app.Activity curr_activity;
 
-
     String serviceId = "com.example.keiji";
 
     ConnectionsClient connectionsClient;
 
     private final PayloadCallback payloadCallback = new PayloadCallback() {
-        @Override
-        public void onPayloadReceived(@NonNull String s, @NonNull Payload payload) {
+        Message currMessage;
 
+        @Override
+        public void onPayloadReceived(@NonNull String endpointId, @NonNull Payload payload) {
+            try {
+                currMessage = (Message) SerializationHandler.deserialize(payload.asBytes());
+            } catch (IOException | ClassNotFoundException e) {
+                Log.d(TAG, e.getMessage());
+            }
+
+            Log.d(TAG, "Message recieved");
         }
 
         @Override
@@ -110,6 +120,7 @@ public class SearchGameActivity extends AppCompatActivity {
     };
 
     private final ConnectionLifecycleCallback connectionLifecycleCallback = new ConnectionLifecycleCallback() {
+
         @Override
         public void onConnectionInitiated(@NonNull String id, @NonNull ConnectionInfo connectionInfo) {
             connectionsClient.acceptConnection(id, payloadCallback);

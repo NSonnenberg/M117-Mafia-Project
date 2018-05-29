@@ -12,7 +12,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.keiji.app.objects.Game;
+import com.example.keiji.app.objects.Message;
 import com.example.keiji.app.objects.Player;
+import com.example.keiji.app.utilities.SerializationHandler;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.AdvertisingOptions;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
@@ -26,6 +28,7 @@ import com.google.android.gms.nearby.connection.Strategy;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,9 +56,18 @@ public class PlayerListActivity extends AppCompatActivity {
     ConnectionsClient connectionsClient;
 
     private final PayloadCallback payloadCallback = new PayloadCallback() {
-        @Override
-        public void onPayloadReceived(@NonNull String s, @NonNull Payload payload) {
+        Message currMessage;
+        AppCompatActivity currActivity;
 
+        @Override
+        public void onPayloadReceived(@NonNull String endpointId, @NonNull Payload payload) {
+            try {
+                currMessage = (Message) SerializationHandler.deserialize(payload.asBytes());
+            } catch (IOException | ClassNotFoundException e) {
+                Log.d(TAG, e.getMessage());
+            }
+
+            Log.d(TAG, "Message recieved");
         }
 
         @Override
