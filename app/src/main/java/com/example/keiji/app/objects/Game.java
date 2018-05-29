@@ -20,21 +20,26 @@ public class Game implements Serializable {
 
     public Game(String gameName, String playerName) {
         this.gameName = gameName;
-
         Player hostPlayer = new Player(playerName, maxplayerid, "");
         playerMap.put(maxplayerid, hostPlayer);
 
         maxplayerid++;
     }
 
+    /*
     public Player addPlayer(String name){
+<<<<<<< Updated upstream
         Player player = new Player(name, maxplayerid, "");
         playerMap.put(maxplayerid, player);
+=======
+//        Player player = new Player(name, maxplayerid);
+//        playerMap.put(maxplayerid, player);
+>>>>>>> Stashed changes
 
-        maxplayerid++;
-        return player;
+//        maxplayerid++;
+//        return player;
     }
-
+*/
     public Player getPlayer(int id){
         return playerMap.get(id);
     }
