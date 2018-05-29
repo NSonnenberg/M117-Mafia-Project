@@ -22,7 +22,7 @@ public class CreateGameActivity extends AppCompatActivity {
 
     //move to PlayerListActivity on submit
     protected void playerList(View v) {
-        Intent cg_intent = new Intent(CreateGameActivity.this, PlayerListActivity.class);
+        Intent cg_intent = new Intent(CreateGameActivity.this, MainGameActivity.class);
         String pname = ((EditText)findViewById(R.id.cg_player_name_text)).getText().toString();
         String gname = ((EditText)findViewById(R.id.cg_game_name_text)).getText().toString();
         //Send data to next activity

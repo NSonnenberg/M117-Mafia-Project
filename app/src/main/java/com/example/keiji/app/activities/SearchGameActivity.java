@@ -119,7 +119,7 @@ public class SearchGameActivity extends AppCompatActivity {
         public void onConnectionResult(@NonNull String s, @NonNull ConnectionResolution connectionResolution) {
             Log.d("tag","connection successful");
             connectionsClient.stopDiscovery();
-            Intent sg_intent = new Intent(SearchGameActivity.this, PlayerListActivity.class);
+            Intent sg_intent = new Intent(SearchGameActivity.this, MainGameActivity.class);
             sg_intent.putExtra("player_name", pname);
             sg_intent.putExtra("host", false);
             startActivity(sg_intent);
