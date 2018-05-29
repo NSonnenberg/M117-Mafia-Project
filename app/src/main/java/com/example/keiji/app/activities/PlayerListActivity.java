@@ -110,6 +110,11 @@ public class PlayerListActivity extends AppCompatActivity {
             player_map.put(pname, player);
             button.setVisibility(View.VISIBLE); //enables start game button
         }
+        //TODO: Else create player object
+        else {
+            player = new Player(pname, 1, "");
+            player_list.add(pname);
+        }
 
         //Display list of players
         ArrayAdapter adapter = new ArrayAdapter<String>(this,

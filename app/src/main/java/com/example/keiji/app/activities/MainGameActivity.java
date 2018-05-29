@@ -101,14 +101,14 @@ public class MainGameActivity extends AppCompatActivity {
         //Create game object and player object only for host
         if (host) {
             game = new Game(gname, pname);
-            player = new Player(pname, 0);
+            player = new Player(pname, 0, "");
             player_list.add(pname);
             button.setVisibility(View.VISIBLE); //enables start game button
             list.setVisibility(View.VISIBLE); //enables list view
         }
         //TODO: Else create player object
         else {
-            player = new Player(pname, 1);
+            player = new Player(pname, 1, "");
             player_list.add(pname);
         }
 
