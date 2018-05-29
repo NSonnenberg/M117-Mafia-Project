@@ -1,6 +1,7 @@
 package com.example.keiji.app.activities;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,12 +14,16 @@ import android.widget.TextView;
 
 import com.example.keiji.app.objects.Game;
 import com.example.keiji.app.objects.Player;
+import com.example.keiji.app.utilities.SerializationHandler;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.AdvertisingOptions;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
 import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback;
 import com.google.android.gms.nearby.connection.ConnectionResolution;
 import com.google.android.gms.nearby.connection.ConnectionsClient;
+import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo;
+import com.google.android.gms.nearby.connection.DiscoveryOptions;
+import com.google.android.gms.nearby.connection.EndpointDiscoveryCallback;
 import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
@@ -26,18 +31,24 @@ import com.google.android.gms.nearby.connection.Strategy;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainGameActivity extends AppCompatActivity {
 
     ArrayList<String> player_list = new ArrayList<>();
+    HashMap<String, Integer> player_map = new HashMap<String, Integer>();
     Player player;
     private static final Strategy STRATEGY = Strategy.P2P_STAR;
     String pname = "";
     String gname = "";
     boolean host = false;
     Game game;
+    int REQUEST_LOCATION = 1;
+    android.app.Activity curr_activity;
 
     ArrayAdapter p_list_adapter;
 
@@ -66,6 +77,7 @@ public class MainGameActivity extends AppCompatActivity {
             Log.d("MainGame", "Connection initiated accepting connection");
             connectionsClient.acceptConnection(id, payloadCallback);
             player_list.add(connectionInfo.getEndpointName());
+            player_map.put(connectionInfo.getEndpointName(), game.addPlayer(connectionInfo.getEndpointName(), id));
             p_list_adapter.notifyDataSetChanged();
             Log.d(TAG, "Accepted connection player_list is now " + player_list.get(1));
         }
@@ -81,10 +93,63 @@ public class MainGameActivity extends AppCompatActivity {
         }
     };
 
+    private final EndpointDiscoveryCallback endpointDiscoveryCallback = new EndpointDiscoveryCallback() {
+        @Override
+        public void onEndpointFound(@NonNull String id, @NonNull DiscoveredEndpointInfo discoveredEndpointInfo) {
+            connectionsClient.stopDiscovery();
+            Log.d(TAG, id);
+            Log.d(TAG, "Endpoint found with serviceId: " + discoveredEndpointInfo.getServiceId());
+            Log.d("SearchGameActivity", "Endpoint found, connecting to device");
+
+            final String endpointId = id;
+            android.app.AlertDialog.Builder builder;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                builder = new android.app.AlertDialog.Builder(curr_activity, android.R.style.Theme_Material_Dialog_Alert);
+            } else {
+                builder = new android.app.AlertDialog.Builder(curr_activity);
+            }
+            builder.setTitle("Make Connection")
+                    .setMessage("Do you want to connect to this player?")
+                    .setPositiveButton(android.R.string.yes, new android.content.DialogInterface.OnClickListener() {
+                        public void onClick(android.content.DialogInterface dialog, int which) {
+                            // continue with connection
+                            connectionsClient.requestConnection(pname, endpointId, connectionLifecycleCallback).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d(TAG, "Successfully requested connection");
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+
+                                    Log.d(TAG, "Failed to request connection", e);
+                                }
+                            });
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new android.content.DialogInterface.OnClickListener() {
+                        public void onClick(android.content.DialogInterface dialog, int which) {
+                            // continue with discovery
+                            startDiscovery();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+
+        }
+
+        @Override
+        public void onEndpointLost(@NonNull String s) {
+
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_game);
+        curr_activity = this;
 
         //Hide button and listview on startup
         Button button = (Button)findViewById(R.id.mg_start_game_button);
@@ -127,12 +192,34 @@ public class MainGameActivity extends AppCompatActivity {
         textView2.setText(gname);
 
         gname = getIntent().getStringExtra("game_name");
-        startAdvertising();
+
+        if (host) {
+            startAdvertising();
+        } else {
+            startDiscovery();
+        }
     }
 
     //Move to MainGameDay Activity
     protected void startGame(View v) {
         connectionsClient.stopAdvertising();
+
+        for (String player : player_map.keySet()) {
+            if (!player.equals(pname)) {
+                Player currPlayer = game.getPlayer(player_map.get(player));
+                try {
+                    connectionsClient.sendPayload(currPlayer.getConnectId(), Payload.fromBytes(SerializationHandler.serialize(currPlayer))).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d(TAG, e.getMessage());
+                        }
+                    });
+                } catch (IOException e) {
+                    Log.d(TAG, e.getMessage());
+                }
+            }
+        }
+        /*
         Intent pl_intent = new Intent(MainGameActivity.this, MainGameDay.class);
         boolean host = getIntent().getBooleanExtra("host", false);
         if (host) {
@@ -140,6 +227,7 @@ public class MainGameActivity extends AppCompatActivity {
         }
         pl_intent.putExtra("host", host);
         startActivity(pl_intent);
+        */
     }
 
     private void broadcastGame() {
@@ -163,5 +251,34 @@ public class MainGameActivity extends AppCompatActivity {
                 }
         );
         Log.d("startAdvertising", "Started Advertising");
+    }
+
+    private void startDiscovery() {
+        connectionsClient.startDiscovery(serviceId, endpointDiscoveryCallback, new DiscoveryOptions(STRATEGY)).addOnSuccessListener(
+                new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("SearchGame","Successfully started discovery");
+                    }
+                }
+        ).addOnFailureListener(
+                new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("SearchGame", "Failed to start discovery", e);
+                    }
+                }
+        );
+        Log.d("SearchGameActivity)", "started discovery");
+    }
+
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_LOCATION) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startDiscovery();
+            }
+        } else {
+            Log.d("SearchGame", "Guess we're not running the game");
+        }
     }
 }
