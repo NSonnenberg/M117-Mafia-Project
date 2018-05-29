@@ -28,11 +28,16 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PlayerListActivity extends AppCompatActivity {
 
-    ArrayList<String> player_list = new ArrayList<>();
+    List<String> player_list = new ArrayList<>();
+    Map<String, Player> player_map = new HashMap<String, Player>();
     Player player;
+    int curr_id = 1;
     private static final Strategy STRATEGY = Strategy.P2P_STAR;
     String pname = "";
     String gname = "";
@@ -62,10 +67,11 @@ public class PlayerListActivity extends AppCompatActivity {
     private final ConnectionLifecycleCallback connectionLifecycleCallback = new ConnectionLifecycleCallback() {
         @Override
         public void onConnectionInitiated(@NonNull String id, @NonNull ConnectionInfo connectionInfo) {
-            connectionsClient.stopAdvertising();
             Log.d("PlayerList", "Connection initiated accepting connection");
             connectionsClient.acceptConnection(id, payloadCallback);
             player_list.add(connectionInfo.getEndpointName());
+            player_map.put(connectionInfo.getEndpointName(), new Player(connectionInfo.getEndpointName(), curr_id, id));
+            curr_id++;
             p_list_adapter.notifyDataSetChanged();
             Log.d(TAG, "Accepted connection player_list is now " + player_list.get(1));
         }
@@ -99,14 +105,10 @@ public class PlayerListActivity extends AppCompatActivity {
         //Create game object and player object only for host
         if (host) {
             game = new Game(gname, pname);
-            player = new Player(pname, 0);
+            player = new Player(pname, 0, "");
             player_list.add(pname);
+            player_map.put(pname, player);
             button.setVisibility(View.VISIBLE); //enables start game button
-        }
-        //TODO: Else create player object
-        else {
-            player = new Player(pname, 1);
-            player_list.add(pname);
         }
 
         //Display list of players
