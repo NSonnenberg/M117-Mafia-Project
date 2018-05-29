@@ -21,14 +21,14 @@ public class Game implements Serializable {
     public Game(String gameName, String playerName) {
         this.gameName = gameName;
 
-        Player hostPlayer = new Player(playerName, maxplayerid);
+        Player hostPlayer = new Player(playerName, maxplayerid, "");
         playerMap.put(maxplayerid, hostPlayer);
 
         maxplayerid++;
     }
 
     public Player addPlayer(String name){
-        Player player = new Player(name, maxplayerid);
+        Player player = new Player(name, maxplayerid, "");
         playerMap.put(maxplayerid, player);
 
         maxplayerid++;
