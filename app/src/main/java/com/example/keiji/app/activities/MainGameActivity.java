@@ -2,11 +2,13 @@ package com.example.keiji.app.activities;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -46,6 +48,21 @@ public class MainGameActivity extends AppCompatActivity {
     private static final int SEARCH = 1;
     private static final int DAY = 2;
     private static final int NIGHT = 3;
+    private TextView countdownText;
+    private Button countdownButton;
+    private Button countdownButtonReset;
+
+    private CountDownTimer countdownTimer;
+    private long timeLeftInMilliseconds = 300000;//5 minutes
+    private boolean timerRunning;
+
+    private TextView gmnameview;
+    private TextView gmnametext;
+    private TextView pnnameview;
+    private TextView pnnametext;
+    private TextView listtext;
+    private Button startgamebutton;
+    private ListView list;
 
     ArrayList<String> player_list = new ArrayList<>();
     HashMap<String, Integer> player_map = new HashMap<String, Integer>();
@@ -187,10 +204,37 @@ public class MainGameActivity extends AppCompatActivity {
         curr_activity = this;
 
         //Hide button and listview on startup
-        Button button = (Button)findViewById(R.id.mg_start_game_button);
+        startgamebutton = (Button)findViewById(R.id.mg_start_game_button);
         ListView list = (ListView)findViewById(R.id.mg_player_list);
-        button.setVisibility(View.GONE);
+        startgamebutton.setVisibility(View.GONE);
         list.setVisibility(View.GONE);
+        countdownText = findViewById(R.id.countdown_text);
+        countdownButton = findViewById(R.id.countdown_button);
+        countdownButtonReset = findViewById(R.id.countdown_button_reset);
+        countdownButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startStop();
+
+            }
+
+        });
+        countdownButtonReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                resetTimer();
+            }
+
+        });
+        countdownText.setVisibility(View.GONE);
+        countdownButton.setVisibility(View.GONE);
+        countdownButtonReset.setVisibility(View.GONE);
+
+        gmnameview = (TextView)findViewById(R.id.mg_game_room_name_view);
+        gmnametext = (TextView)findViewById(R.id.mg_game_room_name);
+        pnnameview = (TextView)findViewById(R.id.mg_player_name_view);
+        pnnametext = (TextView)findViewById(R.id.mg_player_name);
+        listtext = (TextView)findViewById(R.id.mg_list_text);
 
         connectionsClient = Nearby.getConnectionsClient(this);
 
@@ -198,13 +242,16 @@ public class MainGameActivity extends AppCompatActivity {
         gname = getIntent().getStringExtra("game_name"); //TO-DO: Joining players should have gname synced to the host
         host = getIntent().getBooleanExtra("host", false);
 
+        pnnameview.setText(pname);
+        gmnameview.setText(gname);
+
         //Create game object and player object only for host
         if (host) {
             game = new Game(gname, pname);
             player = new Player(pname, 0, "");
             player_list.add(pname);
             player_map.put(pname, 0);
-            button.setVisibility(View.VISIBLE); //enables start game button
+            startgamebutton.setVisibility(View.VISIBLE); //enables start game button
             list.setVisibility(View.VISIBLE); //enables list view
         }
         //TODO: Else create player object
@@ -219,13 +266,16 @@ public class MainGameActivity extends AppCompatActivity {
 
         p_list_adapter = adapter;
 
-        //Display current game name and player name
-        ListView listView = (ListView) findViewById(R.id.mg_player_list);
-        TextView textView = (TextView) findViewById(R.id.mg_player_name_view);
-        TextView textView2 = (TextView) findViewById(R.id.mg_game_room_name_view);
-        listView.setAdapter(adapter);
-        textView.setText(pname);
-        textView2.setText(gname);
+        //Perform function on clicking item in list
+        list.setAdapter(adapter);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Log.d("ListListener", "Clicked item " + position + " " + id);
+
+
+
+            }
+        });
 
         gname = getIntent().getStringExtra("game_name");
 
@@ -282,6 +332,7 @@ public class MainGameActivity extends AppCompatActivity {
         }
 
         mode = DAY;
+        playerListToDay();
         /*
         Intent pl_intent = new Intent(MainGameActivity.this, MainGameDay.class);
         boolean host = getIntent().getBooleanExtra("host", false);
@@ -291,6 +342,32 @@ public class MainGameActivity extends AppCompatActivity {
         pl_intent.putExtra("host", host);
         startActivity(pl_intent);
         */
+    }
+
+    //sitch from PlayerList to DayPhase
+    private void playerListToDay() {
+        countdownText.setVisibility(View.VISIBLE);
+        countdownButton.setVisibility(View.VISIBLE);
+        countdownButtonReset.setVisibility(View.VISIBLE);
+        pnnametext.setVisibility(View.GONE);
+        pnnameview.setVisibility(View.GONE);
+        gmnametext.setText("Your role is: ");
+
+        String role = player.getRole();
+        if (role == "Villager")
+            gmnameview.setText("Villager");
+        else if (role == "Doctor")
+            gmnameview.setText("Doctor");
+        else if (role == "Mafia")
+            gmnameview.setText("Mafia");
+        else
+            gmnameview.setText("No Role");
+        listtext.setText("Nominate");
+        startgamebutton.setVisibility(View.GONE);
+    }
+
+
+    private void broadcastGame() {
     }
 
     private void startAdvertising() {
@@ -339,5 +416,59 @@ public class MainGameActivity extends AppCompatActivity {
         } else {
             Log.d("SearchGame", "Guess we're not running the game");
         }
+    }
+
+    // Timer functions
+    public void startStop() {
+        if (timerRunning) {
+            stopTimer();
+
+        } else {
+            startTimer();
+        }
+    }
+    public void startTimer () {
+        countdownTimer = new CountDownTimer(timeLeftInMilliseconds, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                timeLeftInMilliseconds = millisUntilFinished;
+                updateTimer();
+            }
+
+            @Override
+            public void onFinish() {
+
+            }
+        }.start();
+        countdownButton.setText("Pause");
+        timerRunning = true;
+    }
+    public void stopTimer () {
+        countdownTimer.cancel();
+        timerRunning = false;
+        countdownButton.setText("Start");
+    }
+    public void updateTimer ()
+    {
+        int minutes = (int) timeLeftInMilliseconds / 60000;
+        int seconds = (int) timeLeftInMilliseconds % 60000 / 1000;
+        String timeLeftText;
+        timeLeftText = "" + minutes;
+        timeLeftText += ":";
+        if (seconds < 10) {
+            timeLeftText += "0";
+        }
+        timeLeftText += seconds;
+        countdownText.setText(timeLeftText);
+    }
+    public void resetTimer()
+    {
+        timeLeftInMilliseconds = 300000;
+        if(timerRunning)
+        {
+            stopTimer();
+        }
+        updateTimer();
+        startTimer();
     }
 }
