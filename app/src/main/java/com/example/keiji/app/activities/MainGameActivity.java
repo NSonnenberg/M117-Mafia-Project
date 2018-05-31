@@ -103,6 +103,7 @@ public class MainGameActivity extends AppCompatActivity {
                 if (received.getClass() == Player.class) {
                     Log.d(TAG, "Received player object from " + s + ". Their role was: " + ((Player) received).getRole());
                     player = (Player) received;
+                    playerListToDay();
                 }
 
                 else if (received.getClass() == NominateMessage.class) {
@@ -348,16 +349,8 @@ public class MainGameActivity extends AppCompatActivity {
         pnnametext.setVisibility(View.GONE);
         pnnameview.setVisibility(View.GONE);
         gmnametext.setText("Your role is: ");
-
         String role = player.getRole();
-        if (role == "Villager")
-            gmnameview.setText("Villager");
-        else if (role == "Doctor")
-            gmnameview.setText("Doctor");
-        else if (role == "Mafia")
-            gmnameview.setText("Mafia");
-        else
-            gmnameview.setText("No Role");
+        gmnameview.setText(role);
         listtext.setText("Nominate");
         startgamebutton.setVisibility(View.GONE);
     }

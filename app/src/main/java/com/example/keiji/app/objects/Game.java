@@ -19,19 +19,24 @@ public class Game implements Serializable {
     private int phase = DAY;
 
     public Game(String gameName, String playerName) {
+        /*
         this.gameName = gameName;
         Player hostPlayer = new Player(playerName, maxplayerid, "");
         playerMap.put(maxplayerid, hostPlayer);
 
         maxplayerid++;
+        */
     }
 
     public int addPlayer(String name, String connectId){
+        /*
         Player player = new Player(name, maxplayerid, connectId);
         playerMap.put(maxplayerid, player);
         int currId = maxplayerid;
         maxplayerid++;
         return currId;
+        */
+        return maxplayerid;
     }
 
     public Player getPlayer(int id){
