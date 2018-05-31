@@ -107,7 +107,6 @@ public class MainGameActivity extends AppCompatActivity {
     private final ConnectionLifecycleCallback connectionLifecycleCallback = new ConnectionLifecycleCallback() {
         @Override
         public void onConnectionInitiated(@NonNull String id, @NonNull ConnectionInfo connectionInfo) {
-            connectionsClient.stopAdvertising();
             Log.d("MainGame", "Connection initiated accepting connection");
             connectionsClient.acceptConnection(id, payloadCallback);
             if (host) {
