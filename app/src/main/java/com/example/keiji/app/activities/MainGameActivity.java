@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.keiji.app.objects.Game;
+import com.example.keiji.app.objects.Message;
 import com.example.keiji.app.objects.Player;
 import com.example.keiji.app.utilities.SerializationHandler;
 import com.google.android.gms.nearby.Nearby;
@@ -36,6 +37,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class MainGameActivity extends AppCompatActivity {
 
@@ -61,7 +63,22 @@ public class MainGameActivity extends AppCompatActivity {
     private final PayloadCallback payloadCallback = new PayloadCallback() {
         @Override
         public void onPayloadReceived(@NonNull String s, @NonNull Payload payload) {
+            Object received = null;
+            try {
+                received = SerializationHandler.deserialize(payload.asBytes());
+            } catch (IOException | ClassNotFoundException e) {
+                Log.d(TAG, e.getMessage());
+            }
 
+            if (received == null) {
+                Log.d(TAG, "Messaged was not received");
+            }
+
+            else {
+                if (received.getClass() == Player.class) {
+                    Log.d(TAG, "Received player object from " + s + ". Their role was: " + ((Player) received).getRole());
+                }
+            }
         }
 
         @Override
@@ -76,10 +93,12 @@ public class MainGameActivity extends AppCompatActivity {
             connectionsClient.stopAdvertising();
             Log.d("MainGame", "Connection initiated accepting connection");
             connectionsClient.acceptConnection(id, payloadCallback);
-            player_list.add(connectionInfo.getEndpointName());
-            player_map.put(connectionInfo.getEndpointName(), game.addPlayer(connectionInfo.getEndpointName(), id));
-            p_list_adapter.notifyDataSetChanged();
-            Log.d(TAG, "Accepted connection player_list is now " + player_list.get(1));
+            if (host) {
+                player_list.add(connectionInfo.getEndpointName());
+                player_map.put(connectionInfo.getEndpointName(), game.addPlayer(connectionInfo.getEndpointName(), id));
+                p_list_adapter.notifyDataSetChanged();
+                Log.d(TAG, "Accepted connection player_list is now " + player_list.get(1));
+            }
         }
 
         @Override
@@ -200,13 +219,33 @@ public class MainGameActivity extends AppCompatActivity {
         }
     }
 
-    //Move to MainGameDay Activity
+    // Change MainGameActivity configuration for running the game
     protected void startGame(View v) {
         connectionsClient.stopAdvertising();
+        int numPlayers = player_map.keySet().size();
+        Random rand = new Random();
+        int mafiaNum = rand.nextInt(numPlayers);
+        int doctorNum = -1;
+        if  (numPlayers >  2) {
+            while (mafiaNum == doctorNum) {
+                doctorNum = rand.nextInt(numPlayers);
+            }
+        }
 
+        int i = 0;
         for (String player : player_map.keySet()) {
+            Player currPlayer = game.getPlayer(player_map.get(player));
+            if (i == mafiaNum) {
+                currPlayer.setRole("Mafia");
+            }
+            else if (i == doctorNum) {
+                currPlayer.setRole("Doctor");
+            }
+            else {
+                currPlayer.setRole("Villager");
+            }
+
             if (!player.equals(pname)) {
-                Player currPlayer = game.getPlayer(player_map.get(player));
                 try {
                     connectionsClient.sendPayload(currPlayer.getConnectId(), Payload.fromBytes(SerializationHandler.serialize(currPlayer))).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -218,6 +257,8 @@ public class MainGameActivity extends AppCompatActivity {
                     Log.d(TAG, e.getMessage());
                 }
             }
+
+            i++;
         }
         /*
         Intent pl_intent = new Intent(MainGameActivity.this, MainGameDay.class);
@@ -228,10 +269,6 @@ public class MainGameActivity extends AppCompatActivity {
         pl_intent.putExtra("host", host);
         startActivity(pl_intent);
         */
-    }
-
-    private void broadcastGame() {
-
     }
 
     private void startAdvertising() {
