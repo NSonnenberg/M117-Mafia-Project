@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.keiji.app.objects.Game;
 import com.example.keiji.app.objects.Message;
+import com.example.keiji.app.objects.NominateMessage;
 import com.example.keiji.app.objects.Player;
 import com.example.keiji.app.utilities.SerializationHandler;
 import com.google.android.gms.nearby.Nearby;
@@ -41,6 +42,11 @@ import java.util.Random;
 
 public class MainGameActivity extends AppCompatActivity {
 
+    private static final int PLAYER_LIST = 0;
+    private static final int SEARCH = 1;
+    private static final int DAY = 2;
+    private static final int NIGHT = 3;
+
     ArrayList<String> player_list = new ArrayList<>();
     HashMap<String, Integer> player_map = new HashMap<String, Integer>();
     Player player;
@@ -51,6 +57,8 @@ public class MainGameActivity extends AppCompatActivity {
     Game game;
     int REQUEST_LOCATION = 1;
     android.app.Activity curr_activity;
+
+    int mode;
 
     ArrayAdapter p_list_adapter;
 
@@ -77,6 +85,15 @@ public class MainGameActivity extends AppCompatActivity {
             else {
                 if (received.getClass() == Player.class) {
                     Log.d(TAG, "Received player object from " + s + ". Their role was: " + ((Player) received).getRole());
+                }
+
+                else if (received.getClass() == NominateMessage.class) {
+                    if (host) {
+
+                    }
+                    else {
+                        
+                    }
                 }
             }
         }
@@ -213,8 +230,10 @@ public class MainGameActivity extends AppCompatActivity {
         gname = getIntent().getStringExtra("game_name");
 
         if (host) {
+            mode = PLAYER_LIST;
             startAdvertising();
         } else {
+            mode = SEARCH;
             startDiscovery();
         }
     }
@@ -260,6 +279,8 @@ public class MainGameActivity extends AppCompatActivity {
 
             i++;
         }
+
+        mode = DAY;
         /*
         Intent pl_intent = new Intent(MainGameActivity.this, MainGameDay.class);
         boolean host = getIntent().getBooleanExtra("host", false);
