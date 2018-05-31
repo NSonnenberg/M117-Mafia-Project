@@ -9,15 +9,13 @@ import java.io.Serializable;
 public class Player implements Serializable {
     private String name;
     private String role;
-    private int id;
     private String connectid;
     private boolean isMafia = false;
     private boolean isDoctor = false;
 
-    public Player(String name, int id, String connectId)
+    public Player(String name, String connectId)
     {
         this.name = name;
-        this.id = id;
         this.connectid = connectId;
     }
 
@@ -46,10 +44,6 @@ public class Player implements Serializable {
 
     public String getName() {
         return name;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getConnectId() { return connectid; }

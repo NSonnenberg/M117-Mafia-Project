@@ -65,7 +65,7 @@ public class MainGameActivity extends AppCompatActivity {
     private ListView list;
 
     ArrayList<String> player_list = new ArrayList<>();
-    HashMap<String, Integer> player_map = new HashMap<String, Integer>();
+    HashMap<String, Player> player_map = new HashMap<String, Player>();
     Player player;
     private static final Strategy STRATEGY = Strategy.P2P_STAR;
     String pname = "";
@@ -102,6 +102,7 @@ public class MainGameActivity extends AppCompatActivity {
             else {
                 if (received.getClass() == Player.class) {
                     Log.d(TAG, "Received player object from " + s + ". Their role was: " + ((Player) received).getRole());
+                    player = (Player) received;
                 }
 
                 else if (received.getClass() == NominateMessage.class) {
@@ -128,7 +129,7 @@ public class MainGameActivity extends AppCompatActivity {
             connectionsClient.acceptConnection(id, payloadCallback);
             if (host) {
                 player_list.add(connectionInfo.getEndpointName());
-                player_map.put(connectionInfo.getEndpointName(), game.addPlayer(connectionInfo.getEndpointName(), id));
+                player_map.put(connectionInfo.getEndpointName(), new Player(connectionInfo.getEndpointName(), id));
                 p_list_adapter.notifyDataSetChanged();
                 Log.d(TAG, "Accepted connection player_list is now " + player_list.get(1));
             }
@@ -248,16 +249,11 @@ public class MainGameActivity extends AppCompatActivity {
         //Create game object and player object only for host
         if (host) {
             game = new Game(gname, pname);
-            player = new Player(pname, 0, "");
+            player = new Player(pname, "");
             player_list.add(pname);
-            player_map.put(pname, 0);
             startgamebutton.setVisibility(View.VISIBLE); //enables start game button
+            player_map.put(pname, player);
             list.setVisibility(View.VISIBLE); //enables list view
-        }
-        //TODO: Else create player object
-        else {
-            player = new Player(pname, 1, "");
-            player_list.add(pname);
         }
 
         //Display list of players
@@ -304,20 +300,20 @@ public class MainGameActivity extends AppCompatActivity {
 
         int i = 0;
         for (String player : player_map.keySet()) {
-            Player currPlayer = game.getPlayer(player_map.get(player));
+            Player playerObj = player_map.get(player);
             if (i == mafiaNum) {
-                currPlayer.setRole("Mafia");
+                playerObj.setRole("Mafia");
             }
             else if (i == doctorNum) {
-                currPlayer.setRole("Doctor");
+                playerObj.setRole("Doctor");
             }
             else {
-                currPlayer.setRole("Villager");
+                playerObj.setRole("Villager");
             }
 
             if (!player.equals(pname)) {
                 try {
-                    connectionsClient.sendPayload(currPlayer.getConnectId(), Payload.fromBytes(SerializationHandler.serialize(currPlayer))).addOnFailureListener(new OnFailureListener() {
+                    connectionsClient.sendPayload(playerObj.getConnectId(), Payload.fromBytes(SerializationHandler.serialize(playerObj))).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Log.d(TAG, e.getMessage());
