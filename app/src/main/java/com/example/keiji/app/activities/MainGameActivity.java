@@ -107,11 +107,45 @@ public class MainGameActivity extends AppCompatActivity {
                 }
 
                 else if (received.getClass() == NominateMessage.class) {
+                    android.app.AlertDialog.Builder builder;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                        builder = new android.app.AlertDialog.Builder(curr_activity, android.R.style.Theme_Material_Dialog_Alert);
+                    } else {
+                        builder = new android.app.AlertDialog.Builder(curr_activity);
+                    }
                     if (host) {
+                        builder.setTitle("Nomination")
+                                .setMessage("Player nominated " + ((NominateMessage) received).getNominatedPlayer() + ". Do you want to second?")
+                                .setPositiveButton(android.R.string.yes, new android.content.DialogInterface.OnClickListener() {
+                                    public void onClick(android.content.DialogInterface dialog, int which) {
+                                        // if yes
 
+                                    }
+                                })
+                                .setNegativeButton(android.R.string.no, new android.content.DialogInterface.OnClickListener() {
+                                    public void onClick(android.content.DialogInterface dialog, int which) {
+                                        // if no
+                                    }
+                                })
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .show();
                     }
                     else {
+                        builder.setTitle("Nomination")
+                                .setMessage("Player nominated " + ((NominateMessage) received).getNominatedPlayer() + ". Do you want to second?")
+                                .setPositiveButton(android.R.string.yes, new android.content.DialogInterface.OnClickListener() {
+                                    public void onClick(android.content.DialogInterface dialog, int which) {
+                                        // if yes
 
+                                    }
+                                })
+                                .setNegativeButton(android.R.string.no, new android.content.DialogInterface.OnClickListener() {
+                                    public void onClick(android.content.DialogInterface dialog, int which) {
+                                        // if no
+                                    }
+                                })
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .show();
                     }
                 }
             }
