@@ -92,7 +92,7 @@ public class MainGameActivity extends AppCompatActivity {
 
                     }
                     else {
-                        
+
                     }
                 }
             }
@@ -204,6 +204,7 @@ public class MainGameActivity extends AppCompatActivity {
             game = new Game(gname, pname);
             player = new Player(pname, 0, "");
             player_list.add(pname);
+            player_map.put(pname, 0);
             button.setVisibility(View.VISIBLE); //enables start game button
             list.setVisibility(View.VISIBLE); //enables list view
         }
@@ -242,6 +243,7 @@ public class MainGameActivity extends AppCompatActivity {
     protected void startGame(View v) {
         connectionsClient.stopAdvertising();
         int numPlayers = player_map.keySet().size();
+        Log.d(TAG, "numPlayers = " + numPlayers);
         Random rand = new Random();
         int mafiaNum = rand.nextInt(numPlayers);
         int doctorNum = -1;
