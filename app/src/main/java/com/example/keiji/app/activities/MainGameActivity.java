@@ -441,7 +441,7 @@ public class MainGameActivity extends AppCompatActivity {
 
                 if (mode == NIGHT) {
                     if (host) {
-                       if (player_map.get(pname).isMafia()) {
+                       if (player.isMafia()) {
                            mafiaKill = player_list.get(position);
                            Log.d(TAG, "Killed player: " + mafiaKill);
                        } else if (player_map.get(pname).isDoctor()) {
@@ -494,8 +494,8 @@ public class MainGameActivity extends AppCompatActivity {
         }
 
         int i = 0;
-        for (String player : player_map.keySet()) {
-            Player playerObj = player_map.get(player);
+        for (String player_name : player_map.keySet()) {
+            Player playerObj = player_map.get(player_name);
             if (i == mafiaNum) {
                 playerObj.setRole("Mafia");
             }
@@ -506,7 +506,11 @@ public class MainGameActivity extends AppCompatActivity {
                 playerObj.setRole("Villager");
             }
 
-            if (!player.equals(pname)) {
+            if (player_name.equals(pname)) {
+                player.setRole(playerObj.getRole());
+            }
+
+            if (!player_name.equals(pname)) {
                 try {
                     connectionsClient.sendPayload(playerObj.getConnectId(), Payload.fromBytes(SerializationHandler.serialize(new StartGameMessage(playerObj, player_list)))).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -583,7 +587,6 @@ public class MainGameActivity extends AppCompatActivity {
         if (total == player_list.size()) {
             if (yes > no) {
                 player_list.remove(nominatedPlayer);
-                player_map.remove(nominatedPlayer);
                 p_list_adapter.notifyDataSetChanged();
 
                 for (String player_name : player_map.keySet()) {
@@ -678,14 +681,12 @@ public class MainGameActivity extends AppCompatActivity {
                         if (!mafiaKill.isEmpty()) {
                             if (!doctorSave.isEmpty()) {
                                 if (!mafiaKill.equals(doctorSave)) {
-                                    player_map.remove(mafiaKill);
                                     player_list.remove(mafiaKill);
                                     p_list_adapter.notifyDataSetChanged();
                                 }
                             }
                             else {
                                 player_list.remove(mafiaKill);
-                                player_map.remove(mafiaKill);
                                 p_list_adapter.notifyDataSetChanged();
                             }
                         }
