@@ -227,6 +227,18 @@ public class MainGameActivity extends AppCompatActivity {
                 else if (received.getClass() == PlayerLynchMessage.class) {
                     PlayerLynchMessage message = (PlayerLynchMessage) received;
 
+                    android.app.AlertDialog.Builder builder;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                        builder = new android.app.AlertDialog.Builder(curr_activity, android.R.style.Theme_Material_Dialog_Alert);
+                    } else {
+                        builder = new android.app.AlertDialog.Builder(curr_activity);
+                    }
+                    builder.setTitle("Game Found")
+                            .setMessage(message.getPlayerLynched() + " has been killed.")
+                            .setPositiveButton("OK", null)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+
                     player_list = message.getUpdatedPlayerList();
                     p_list_adapter.notifyDataSetChanged();
                 }
