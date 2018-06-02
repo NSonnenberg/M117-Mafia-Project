@@ -258,11 +258,6 @@ public class MainGameActivity extends AppCompatActivity {
                             .show();
 
                     Log.d(TAG, "Received PlayerLynchMessage, dead player is: " + message.getPlayerLynched());
-                    if (host) {
-                        if (player_map.get(message.getPlayerLynched()).isMafia()) {
-                            EndGame(1);
-                        }
-                    }
                     player_list.remove(message.getPlayerLynched());
                     p_list_adapter.notifyDataSetChanged();
                 }
@@ -637,6 +632,10 @@ public class MainGameActivity extends AppCompatActivity {
             if (yes > no) {
                 player_list.remove(nominatedPlayer);
                 p_list_adapter.notifyDataSetChanged();
+
+                if (player_map.get(nominatedPlayer).isMafia()) {
+                    EndGame(1);
+                }
 
                 for (String player_name : player_map.keySet()) {
                     Player playerObj = player_map.get(player_name);
