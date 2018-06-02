@@ -11,4 +11,12 @@
     <string name="start">Start</string>
     <string name="reset">Reset</string>
     <string name="role">Role</string>
+    <string name="length">Round Length</string>
+    <string-array name="round_length_list">
+        <item>1 minute</item>
+        <item>2 minute</item>
+        <item>3 minute</item>
+        <item>4 minute</item>
+        <item>5 minute</item>
+    </string-array>
 </resources>

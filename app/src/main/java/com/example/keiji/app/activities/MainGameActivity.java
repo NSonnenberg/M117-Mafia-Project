@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.example.keiji.app.objects.DecisionMessage;
 import com.example.keiji.app.objects.DoctorMessage;
+import com.example.keiji.app.objects.EndGameMessage;
 import com.example.keiji.app.objects.Game;
 import com.example.keiji.app.objects.MafiaMessage;
 import com.example.keiji.app.objects.Message;
@@ -59,14 +60,14 @@ public class MainGameActivity extends AppCompatActivity {
     private static final int DAY = 2;
     private static final int NIGHT = 3;
 
-    private static final long MAX_COUNTDOWN = 30000;
+    private static long MAX_COUNTDOWN = 60000;
 
     private TextView countdownText;
     private Button countdownButton;
     private Button countdownButtonReset;
 
     private CountDownTimer countdownTimer;
-    private long timeLeftInMilliseconds = MAX_COUNTDOWN;//5 minutes
+    private long timeLeftInMilliseconds;//5 minutes
     private boolean timerRunning;
 
     private TextView gmnameview;
@@ -274,6 +275,13 @@ public class MainGameActivity extends AppCompatActivity {
                     Log.d(TAG, "Received Doctor save: " + message.getPlayer());
                     doctorSave = message.getPlayer();
                 }
+                else if (received.getClass() == EndGameMessage.class) {
+                    EndGameMessage message = (EndGameMessage) received;
+
+                    Intent ayy_lmao_intent = new Intent(MainGameActivity.this, YouWinActivity.class);
+                    ayy_lmao_intent.putExtra("winner", message.getWinner());
+                    startActivity(ayy_lmao_intent);
+                }
             }
         }
 
@@ -369,6 +377,8 @@ public class MainGameActivity extends AppCompatActivity {
         curr_activity = this;
 
         //Hide button and listview on startup
+        MAX_COUNTDOWN = getIntent().getIntExtra("timer", 60000);
+        timeLeftInMilliseconds = MAX_COUNTDOWN;
         startgamebutton = (Button)findViewById(R.id.mg_start_game_button);
         list = (ListView)findViewById(R.id.mg_player_list);
         startgamebutton.setVisibility(View.GONE);
@@ -581,6 +591,40 @@ public class MainGameActivity extends AppCompatActivity {
         }
         mode = DAY;
         resetTimer();
+
+        boolean mafiaexists = false;
+        for (String player: player_map.keySet()) {
+            if (player_map.get(player).isMafia()) {
+                mafiaexists = true;
+            }
+        }
+        if (mafiaexists && player_map.size() == 1) {
+            EndGame(0);
+        } else if (!mafiaexists){
+            EndGame(1);
+        }
+    }
+
+    public void EndGame(int winner) {
+        for (String player: player_map.keySet()) {
+            try {
+                Player playerObj = player_map.get(player);
+                connectionsClient.sendPayload(playerObj.getConnectId(), Payload.fromBytes(SerializationHandler.serialize(new EndGameMessage(winner)))).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+                });
+
+                Log.d(TAG, "Sent EndGameMessage");
+            } catch (IOException e) {
+                Log.d(TAG, "Failed to send payload EndGameMessage: " + e.toString());
+                //Log.d(TAG, e.getMessage());
+            }
+        }
+        Intent ayy_lmao_intent = new Intent(MainGameActivity.this, YouWinActivity.class);
+        ayy_lmao_intent.putExtra("winner", winner);
+        startActivity(ayy_lmao_intent);
     }
 
     public void checkNominateTotal() {
