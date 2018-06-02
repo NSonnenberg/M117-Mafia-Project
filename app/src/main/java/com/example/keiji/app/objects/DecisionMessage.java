@@ -1,6 +1,8 @@
 package com.example.keiji.app.objects;
 
-public class DecisionMessage {
+import java.io.Serializable;
+
+public class DecisionMessage implements Serializable {
     private boolean votedFor;
 
     public DecisionMessage(boolean votedFor) {

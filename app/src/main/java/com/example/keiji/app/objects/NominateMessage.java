@@ -1,6 +1,8 @@
 package com.example.keiji.app.objects;
 
-public class NominateMessage {
+import java.io.Serializable;
+
+public class NominateMessage implements Serializable {
     private String nominatedPlayer;
 
     public NominateMessage(String nominatedPlayer) {

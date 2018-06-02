@@ -1,9 +1,11 @@
 package com.example.keiji.app.activities;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,10 +16,14 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.keiji.app.objects.DecisionMessage;
 import com.example.keiji.app.objects.Game;
 import com.example.keiji.app.objects.Message;
 import com.example.keiji.app.objects.NominateMessage;
+import com.example.keiji.app.objects.PhaseChangeMessage;
 import com.example.keiji.app.objects.Player;
+import com.example.keiji.app.objects.PlayerLynchMessage;
+import com.example.keiji.app.objects.StartGameMessage;
 import com.example.keiji.app.utilities.SerializationHandler;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.AdvertisingOptions;
@@ -38,7 +44,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -48,12 +56,15 @@ public class MainGameActivity extends AppCompatActivity {
     private static final int SEARCH = 1;
     private static final int DAY = 2;
     private static final int NIGHT = 3;
+
+    private static final long MAX_COUNTDOWN = 30000;
+
     private TextView countdownText;
     private Button countdownButton;
     private Button countdownButtonReset;
 
     private CountDownTimer countdownTimer;
-    private long timeLeftInMilliseconds = 300000;//5 minutes
+    private long timeLeftInMilliseconds = MAX_COUNTDOWN;//5 minutes
     private boolean timerRunning;
 
     private TextView gmnameview;
@@ -64,7 +75,7 @@ public class MainGameActivity extends AppCompatActivity {
     private Button startgamebutton;
     private ListView list;
 
-    ArrayList<String> player_list = new ArrayList<>();
+    List<String> player_list = new ArrayList<>();
     HashMap<String, Player> player_map = new HashMap<String, Player>();
     Player player;
     private static final Strategy STRATEGY = Strategy.P2P_STAR;
@@ -74,6 +85,12 @@ public class MainGameActivity extends AppCompatActivity {
     Game game;
     int REQUEST_LOCATION = 1;
     android.app.Activity curr_activity;
+
+    // used for calculating if a player is lynched
+    int yes = 0;
+    int no = 0;
+    int total = 0;
+    String nominatedPlayer = "";
 
     int mode;
 
@@ -87,7 +104,7 @@ public class MainGameActivity extends AppCompatActivity {
 
     private final PayloadCallback payloadCallback = new PayloadCallback() {
         @Override
-        public void onPayloadReceived(@NonNull String s, @NonNull Payload payload) {
+        public void onPayloadReceived(@NonNull final String endpointId, @NonNull Payload payload) {
             Object received = null;
             try {
                 received = SerializationHandler.deserialize(payload.asBytes());
@@ -100,13 +117,20 @@ public class MainGameActivity extends AppCompatActivity {
             }
 
             else {
-                if (received.getClass() == Player.class) {
-                    Log.d(TAG, "Received player object from " + s + ". Their role was: " + ((Player) received).getRole());
-                    player = (Player) received;
+                if (received.getClass() == StartGameMessage.class) {
+                    StartGameMessage message = (StartGameMessage) received;
+                    player_list.addAll(message.getPlayer_list());
+                    player = message.getPlayer();
+                    p_list_adapter.notifyDataSetChanged();
+                    Log.d(TAG,  "Player List is: " + player_list.toString());
+                    Log.d(TAG, "Received player object from " + endpointId + ". Their role was: " + (player.getRole()));
                     playerListToDay();
                 }
 
                 else if (received.getClass() == NominateMessage.class) {
+                    NominateMessage message = (NominateMessage) received;
+                    nominatedPlayer = message.getNominatedPlayer();
+
                     android.app.AlertDialog.Builder builder;
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                         builder = new android.app.AlertDialog.Builder(curr_activity, android.R.style.Theme_Material_Dialog_Alert);
@@ -115,16 +139,17 @@ public class MainGameActivity extends AppCompatActivity {
                     }
                     if (host) {
                         builder.setTitle("Nomination")
-                                .setMessage("Player nominated " + ((NominateMessage) received).getNominatedPlayer() + ". Do you want to second?")
+                                .setMessage("Player nominated " + message.getNominatedPlayer() + ". Do you want to second?")
                                 .setPositiveButton(android.R.string.yes, new android.content.DialogInterface.OnClickListener() {
                                     public void onClick(android.content.DialogInterface dialog, int which) {
                                         // if yes
-
+                                        yes++;
                                     }
                                 })
                                 .setNegativeButton(android.R.string.no, new android.content.DialogInterface.OnClickListener() {
                                     public void onClick(android.content.DialogInterface dialog, int which) {
                                         // if no
+                                        no++;
                                     }
                                 })
                                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -136,17 +161,83 @@ public class MainGameActivity extends AppCompatActivity {
                                 .setPositiveButton(android.R.string.yes, new android.content.DialogInterface.OnClickListener() {
                                     public void onClick(android.content.DialogInterface dialog, int which) {
                                         // if yes
-
+                                        try {
+                                            connectionsClient.sendPayload(endpointId, Payload.fromBytes(SerializationHandler.serialize(new DecisionMessage(true))));
+                                        } catch (IOException e) {
+                                            Log.d(TAG, e.getMessage());
+                                        }
                                     }
                                 })
                                 .setNegativeButton(android.R.string.no, new android.content.DialogInterface.OnClickListener() {
                                     public void onClick(android.content.DialogInterface dialog, int which) {
                                         // if no
+                                        try {
+                                            connectionsClient.sendPayload(endpointId, Payload.fromBytes(SerializationHandler.serialize(new DecisionMessage(false))));
+                                        } catch (IOException e) {
+                                            Log.d(TAG, e.getMessage());
+                                        }
                                     }
                                 })
                                 .setIcon(android.R.drawable.ic_dialog_alert)
                                 .show();
                     }
+                }
+
+                else if (received.getClass() == PhaseChangeMessage.class) {
+                    PhaseChangeMessage message = (PhaseChangeMessage) received;
+
+                    if (message.getNewPhase() == DAY) {
+                        player_list = message.getNewPlayerList();
+                        nightToDay();
+                        p_list_adapter.notifyDataSetChanged();
+                    }
+
+                    else if (message.getNewPhase() == NIGHT) {
+                        player_list = message.getNewPlayerList();
+                        dayToNight();
+                        p_list_adapter.notifyDataSetChanged();
+                    }
+                }
+
+                else if (received.getClass() == DecisionMessage.class) {
+                    DecisionMessage message = (DecisionMessage) received;
+
+                    if (message.isVotedFor()) {
+                        yes++;
+                    } else {
+                        no++;
+                    }
+
+                    total++;
+
+                    if (total == player_list.size()) {
+                        if (yes > no) {
+                            player_list.remove(nominatedPlayer);
+                            player_map.remove(nominatedPlayer);
+                            p_list_adapter.notifyDataSetChanged();
+
+                            for (String player_name : player_map.keySet()) {
+                                Player playerObj = player_map.get(player_name);
+
+                                try {
+                                    connectionsClient.sendPayload(playerObj.getConnectId(), Payload.fromBytes(SerializationHandler.serialize(new PlayerLynchMessage(nominatedPlayer, player_list))));
+                                } catch (IOException e) {
+                                    Log.d(TAG, e.getMessage());
+                                }
+                            }
+                        }
+
+                        yes = 0;
+                        no = 0;
+                        total = 0;
+                    }
+                }
+
+                else if (received.getClass() == PlayerLynchMessage.class) {
+                    PlayerLynchMessage message = (PlayerLynchMessage) received;
+
+                    player_list = message.getUpdatedPlayerList();
+                    p_list_adapter.notifyDataSetChanged();
                 }
             }
         }
@@ -166,7 +257,7 @@ public class MainGameActivity extends AppCompatActivity {
                 player_list.add(connectionInfo.getEndpointName());
                 player_map.put(connectionInfo.getEndpointName(), new Player(connectionInfo.getEndpointName(), id));
                 p_list_adapter.notifyDataSetChanged();
-                Log.d(TAG, "Accepted connection player_list is now " + player_list.get(1));
+                Log.d(TAG, "Accepted connection player_list is now " + player_list.toString());
             }
         }
 
@@ -188,16 +279,18 @@ public class MainGameActivity extends AppCompatActivity {
             Log.d(TAG, id);
             Log.d(TAG, "Endpoint found with serviceId: " + discoveredEndpointInfo.getServiceId());
             Log.d("SearchGameActivity", "Endpoint found, connecting to device");
+            String connection_message = "Do you want to connect to game: " + discoveredEndpointInfo.getEndpointName() + "?";
 
             final String endpointId = id;
+            serviceId = id;
             android.app.AlertDialog.Builder builder;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 builder = new android.app.AlertDialog.Builder(curr_activity, android.R.style.Theme_Material_Dialog_Alert);
             } else {
                 builder = new android.app.AlertDialog.Builder(curr_activity);
             }
-            builder.setTitle("Make Connection")
-                    .setMessage("Do you want to connect to this player?")
+            builder.setTitle("Game Found")
+                    .setMessage(connection_message)
                     .setPositiveButton(android.R.string.yes, new android.content.DialogInterface.OnClickListener() {
                         public void onClick(android.content.DialogInterface dialog, int which) {
                             // continue with connection
@@ -241,7 +334,7 @@ public class MainGameActivity extends AppCompatActivity {
 
         //Hide button and listview on startup
         startgamebutton = (Button)findViewById(R.id.mg_start_game_button);
-        ListView list = (ListView)findViewById(R.id.mg_player_list);
+        list = (ListView)findViewById(R.id.mg_player_list);
         startgamebutton.setVisibility(View.GONE);
         list.setVisibility(View.GONE);
         countdownText = findViewById(R.id.countdown_text);
@@ -304,7 +397,6 @@ public class MainGameActivity extends AppCompatActivity {
                 //Log.d("ListListener", "Clicked item " + position + " " + id);
 
 
-
             }
         });
 
@@ -315,7 +407,11 @@ public class MainGameActivity extends AppCompatActivity {
             startAdvertising();
         } else {
             mode = SEARCH;
-            startDiscovery();
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
+            } else {
+                startDiscovery();
+            }
         }
     }
 
@@ -348,21 +444,23 @@ public class MainGameActivity extends AppCompatActivity {
 
             if (!player.equals(pname)) {
                 try {
-                    connectionsClient.sendPayload(playerObj.getConnectId(), Payload.fromBytes(SerializationHandler.serialize(playerObj))).addOnFailureListener(new OnFailureListener() {
+                    connectionsClient.sendPayload(playerObj.getConnectId(), Payload.fromBytes(SerializationHandler.serialize(new StartGameMessage(playerObj, player_list)))).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Log.d(TAG, e.getMessage());
                         }
                     });
+
+                    Log.d(TAG, "Sent StartGameMessage");
                 } catch (IOException e) {
-                    Log.d(TAG, e.getMessage());
+                    Log.d(TAG, "Failed to send payload StartGameMessage: " + e.toString());
+                    //Log.d(TAG, e.getMessage());
                 }
             }
 
             i++;
         }
 
-        mode = DAY;
         playerListToDay();
         /*
         Intent pl_intent = new Intent(MainGameActivity.this, MainGameDay.class);
@@ -377,6 +475,7 @@ public class MainGameActivity extends AppCompatActivity {
 
     //sitch from PlayerList to DayPhase
     private void playerListToDay() {
+        Log.d(TAG, "Entered playerListToDay()");
         countdownText.setVisibility(View.VISIBLE);
         countdownButton.setVisibility(View.VISIBLE);
         countdownButtonReset.setVisibility(View.VISIBLE);
@@ -386,11 +485,34 @@ public class MainGameActivity extends AppCompatActivity {
         String role = player.getRole();
         gmnameview.setText(role);
         listtext.setText("Nominate");
+        list.setVisibility(View.VISIBLE);
         startgamebutton.setVisibility(View.GONE);
+        mode = DAY;
+        startTimer();
     }
 
+    private void dayToNight() {
+        if (player.isMafia()) {
+            listtext.setText("Choose a player to kill");
+        } else if (player.isDoctor()) {
+            listtext.setText("Choose a player to save");
+        } else {
+            listtext.setVisibility(View.GONE);
+            list.setVisibility(View.GONE);
+        }
 
-    private void broadcastGame() {
+        mode = NIGHT;
+        resetTimer();
+    }
+
+    private void nightToDay() {
+        listtext.setText("Nominate");
+        if (!player.isDoctor() && !player.isMafia()) {
+            listtext.setVisibility(View.VISIBLE);
+            list.setVisibility(View.VISIBLE);
+        }
+        mode = DAY;
+        resetTimer();
     }
 
     private void startAdvertising() {
@@ -460,8 +582,32 @@ public class MainGameActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
+                if (host) {
+                    PhaseChangeMessage message;
+                    if (mode == DAY) {
+                        message = new PhaseChangeMessage(NIGHT, player_list);
+                    } else {
+                        message = new PhaseChangeMessage(DAY, player_list);
+                    }
 
+                    for (String player_name : player_map.keySet()) {
+                        Player playerObj = player_map.get(player_name);
+
+                        try {
+                            connectionsClient.sendPayload(playerObj.getConnectId(), Payload.fromBytes(SerializationHandler.serialize(message)));
+                        } catch (IOException e) {
+                            Log.d(TAG, e.getMessage());
+                        }
+                    }
+
+                    if (mode == DAY) {
+                        dayToNight();
+                    } else {
+                        nightToDay();
+                    }
+                }
             }
+
         }.start();
         countdownButton.setText("Pause");
         timerRunning = true;
@@ -486,7 +632,7 @@ public class MainGameActivity extends AppCompatActivity {
     }
     public void resetTimer()
     {
-        timeLeftInMilliseconds = 300000;
+        timeLeftInMilliseconds = MAX_COUNTDOWN;
         if(timerRunning)
         {
             stopTimer();

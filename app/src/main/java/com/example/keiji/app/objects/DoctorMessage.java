@@ -1,6 +1,8 @@
 package com.example.keiji.app.objects;
 
-public class DoctorMessage {
+import java.io.Serializable;
+
+public class DoctorMessage implements Serializable {
     private String player;
 
     public DoctorMessage(String player) {

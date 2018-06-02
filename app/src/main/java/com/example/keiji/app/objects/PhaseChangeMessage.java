@@ -1,19 +1,23 @@
 package com.example.keiji.app.objects;
 
-public class PhaseChangeMessage {
-    private String newPhase;
-    private String[] newPlayerList;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-    public PhaseChangeMessage(String newPhase, String[] newPlayerList) {
+public class PhaseChangeMessage implements Serializable {
+    private int newPhase;
+    private List<String> newPlayerList;
+
+    public PhaseChangeMessage(int newPhase, List<String> newPlayerList) {
         this.newPhase = newPhase;
         this.newPlayerList = newPlayerList;
     }
 
-    public String getNewPhase() {
+    public int getNewPhase() {
         return this.newPhase;
     }
 
-    public String[] getNewPlayerList() {
+    public List<String> getNewPlayerList() {
         return this.newPlayerList;
     }
 }

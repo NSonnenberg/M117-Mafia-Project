@@ -1,6 +1,8 @@
 package com.example.keiji.app.objects;
 
-public class MafiaMessage {
+import java.io.Serializable;
+
+public class MafiaMessage implements Serializable{
     private String player;
 
     public MafiaMessage(String player) {

@@ -1,10 +1,14 @@
 package com.example.keiji.app.objects;
 
-public class PlayerLynchMessage {
-    private String playerLynched;
-    private String[] updatedPlayerList;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-    public PlayerLynchMessage(String playerLynched, String[] updatedPlayerList) {
+public class PlayerLynchMessage implements Serializable {
+    private String playerLynched;
+    private List<String> updatedPlayerList;
+
+    public PlayerLynchMessage(String playerLynched, List<String> updatedPlayerList) {
         this.playerLynched = playerLynched;
         this.updatedPlayerList = updatedPlayerList;
     }
@@ -13,7 +17,7 @@ public class PlayerLynchMessage {
         return this.playerLynched;
     }
 
-    public String[] getUpdatedPlayerList() {
+    public List<String> getUpdatedPlayerList() {
         return this.updatedPlayerList;
     }
 }
