@@ -212,9 +212,9 @@ public class MainGameActivity extends AppCompatActivity {
                 else if (received.getClass() == PhaseChangeMessage.class) {
                     PhaseChangeMessage message = (PhaseChangeMessage) received;
 
-                    for (String player : player_list) {
-                        if (!message.getNewPlayerList().contains(player)) {
-                            player_list.remove(player);
+                    for (String player_name : player_list) {
+                        if (!message.getNewPlayerList().contains(player_name)) {
+                            player_list.remove(player_name);
                         }
                     }
 
@@ -258,6 +258,9 @@ public class MainGameActivity extends AppCompatActivity {
                             .show();
 
                     Log.d(TAG, "Received PlayerLynchMessage, dead player is: " + message.getPlayerLynched());
+                    if (player_map.get(message.getPlayerLynched()).isMafia()) {
+                        EndGame(1);
+                    }
                     player_list.remove(message.getPlayerLynched());
                     p_list_adapter.notifyDataSetChanged();
                 }
