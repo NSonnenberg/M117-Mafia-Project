@@ -86,11 +86,16 @@ public class MainGameActivity extends AppCompatActivity {
     int REQUEST_LOCATION = 1;
     android.app.Activity curr_activity;
 
+    String hostId;
+
     // used for calculating if a player is lynched
     int yes = 0;
     int no = 0;
     int total = 0;
     String nominatedPlayer = "";
+
+    String mafiaKill = "";
+    String doctorSave = "";
 
     int mode;
 
@@ -138,18 +143,24 @@ public class MainGameActivity extends AppCompatActivity {
                         builder = new android.app.AlertDialog.Builder(curr_activity);
                     }
                     if (host) {
+                        yes++;
+                        total++;
                         builder.setTitle("Nomination")
                                 .setMessage("Player nominated " + message.getNominatedPlayer() + ". Do you want to second?")
                                 .setPositiveButton(android.R.string.yes, new android.content.DialogInterface.OnClickListener() {
                                     public void onClick(android.content.DialogInterface dialog, int which) {
                                         // if yes
+                                        total++;
                                         yes++;
+                                        checkNominateTotal();
                                     }
                                 })
                                 .setNegativeButton(android.R.string.no, new android.content.DialogInterface.OnClickListener() {
                                     public void onClick(android.content.DialogInterface dialog, int which) {
                                         // if no
+                                        total++;
                                         no++;
+                                        checkNominateTotal();
                                     }
                                 })
                                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -210,27 +221,7 @@ public class MainGameActivity extends AppCompatActivity {
 
                     total++;
 
-                    if (total == player_list.size()) {
-                        if (yes > no) {
-                            player_list.remove(nominatedPlayer);
-                            player_map.remove(nominatedPlayer);
-                            p_list_adapter.notifyDataSetChanged();
-
-                            for (String player_name : player_map.keySet()) {
-                                Player playerObj = player_map.get(player_name);
-
-                                try {
-                                    connectionsClient.sendPayload(playerObj.getConnectId(), Payload.fromBytes(SerializationHandler.serialize(new PlayerLynchMessage(nominatedPlayer, player_list))));
-                                } catch (IOException e) {
-                                    Log.d(TAG, e.getMessage());
-                                }
-                            }
-                        }
-
-                        yes = 0;
-                        no = 0;
-                        total = 0;
-                    }
+                    checkNominateTotal();
                 }
 
                 else if (received.getClass() == PlayerLynchMessage.class) {
@@ -283,6 +274,7 @@ public class MainGameActivity extends AppCompatActivity {
 
             final String endpointId = id;
             serviceId = id;
+            hostId = id;
             android.app.AlertDialog.Builder builder;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 builder = new android.app.AlertDialog.Builder(curr_activity, android.R.style.Theme_Material_Dialog_Alert);
@@ -395,8 +387,13 @@ public class MainGameActivity extends AppCompatActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //Log.d("ListListener", "Clicked item " + position + " " + id);
-
-
+                if (mode == DAY) {
+                    try {
+                        connectionsClient.sendPayload(hostId, Payload.fromBytes(SerializationHandler.serialize(new NominateMessage(player_list.get(position)))));
+                    } catch (IOException e) {
+                        Log.d(TAG, e.toString());
+                    }
+                }
             }
         });
 
@@ -513,6 +510,30 @@ public class MainGameActivity extends AppCompatActivity {
         }
         mode = DAY;
         resetTimer();
+    }
+
+    public void checkNominateTotal() {
+        if (total == player_list.size()) {
+            if (yes > no) {
+                player_list.remove(nominatedPlayer);
+                player_map.remove(nominatedPlayer);
+                p_list_adapter.notifyDataSetChanged();
+
+                for (String player_name : player_map.keySet()) {
+                    Player playerObj = player_map.get(player_name);
+
+                    try {
+                        connectionsClient.sendPayload(playerObj.getConnectId(), Payload.fromBytes(SerializationHandler.serialize(new PlayerLynchMessage(nominatedPlayer, player_list))));
+                    } catch (IOException e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+                }
+            }
+
+            yes = 0;
+            no = 0;
+            total = 0;
+        }
     }
 
     private void startAdvertising() {
