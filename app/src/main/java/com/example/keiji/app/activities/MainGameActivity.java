@@ -258,8 +258,10 @@ public class MainGameActivity extends AppCompatActivity {
                             .show();
 
                     Log.d(TAG, "Received PlayerLynchMessage, dead player is: " + message.getPlayerLynched());
-                    if (player_map.get(message.getPlayerLynched()).isMafia()) {
-                        EndGame(1);
+                    if (host) {
+                        if (player_map.get(message.getPlayerLynched()).isMafia()) {
+                            EndGame(1);
+                        }
                     }
                     player_list.remove(message.getPlayerLynched());
                     p_list_adapter.notifyDataSetChanged();
