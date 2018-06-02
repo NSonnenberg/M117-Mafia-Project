@@ -8,4 +8,8 @@ public class DoctorMessage implements Serializable {
     public DoctorMessage(String player) {
         this.player = player;
     }
+
+    public String getPlayer() {
+        return this.player;
+    }
 }

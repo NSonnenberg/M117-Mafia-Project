@@ -17,7 +17,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.keiji.app.objects.DecisionMessage;
+import com.example.keiji.app.objects.DoctorMessage;
 import com.example.keiji.app.objects.Game;
+import com.example.keiji.app.objects.MafiaMessage;
 import com.example.keiji.app.objects.Message;
 import com.example.keiji.app.objects.NominateMessage;
 import com.example.keiji.app.objects.PhaseChangeMessage;
@@ -143,6 +145,18 @@ public class MainGameActivity extends AppCompatActivity {
                         builder = new android.app.AlertDialog.Builder(curr_activity);
                     }
                     if (host) {
+                        for (String player : player_map.keySet()) {
+                            Player playerObj = player_map.get(player);
+
+                            if (!playerObj.getConnectId().equals(endpointId)) {
+                                try {
+                                    connectionsClient.sendPayload(playerObj.getConnectId(), Payload.fromBytes(SerializationHandler.serialize(new NominateMessage(nominatedPlayer))));
+                                } catch (IOException e) {
+                                    Log.d(TAG, e.toString());
+                                }
+                            }
+                        }
+
                         yes++;
                         total++;
                         builder.setTitle("Nomination")
@@ -197,16 +211,20 @@ public class MainGameActivity extends AppCompatActivity {
                 else if (received.getClass() == PhaseChangeMessage.class) {
                     PhaseChangeMessage message = (PhaseChangeMessage) received;
 
+                    for (String player : player_list) {
+                        if (!message.getNewPlayerList().contains(player)) {
+                            player_list.remove(player);
+                        }
+                    }
+
+                    p_list_adapter.notifyDataSetChanged();
+
                     if (message.getNewPhase() == DAY) {
-                        player_list = message.getNewPlayerList();
                         nightToDay();
-                        p_list_adapter.notifyDataSetChanged();
                     }
 
                     else if (message.getNewPhase() == NIGHT) {
-                        player_list = message.getNewPlayerList();
                         dayToNight();
-                        p_list_adapter.notifyDataSetChanged();
                     }
                 }
 
@@ -226,7 +244,6 @@ public class MainGameActivity extends AppCompatActivity {
 
                 else if (received.getClass() == PlayerLynchMessage.class) {
                     PlayerLynchMessage message = (PlayerLynchMessage) received;
-
                     android.app.AlertDialog.Builder builder;
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                         builder = new android.app.AlertDialog.Builder(curr_activity, android.R.style.Theme_Material_Dialog_Alert);
@@ -239,8 +256,23 @@ public class MainGameActivity extends AppCompatActivity {
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .show();
 
-                    player_list = message.getUpdatedPlayerList();
+                    Log.d(TAG, "Received PlayerLynchMessage, dead player is: " + message.getPlayerLynched());
+                    player_list.remove(message.getPlayerLynched());
                     p_list_adapter.notifyDataSetChanged();
+                }
+
+                else if (received.getClass() == MafiaMessage.class) {
+                    MafiaMessage message = (MafiaMessage) received;
+
+                    Log.d(TAG, "Received Mafia kill: " + message.getPlayer());
+                    mafiaKill = message.getPlayer();
+                }
+
+                else if (received.getClass() == DoctorMessage.class) {
+                    DoctorMessage message = (DoctorMessage) received;
+
+                    Log.d(TAG, "Received Doctor save: " + message.getPlayer());
+                    doctorSave = message.getPlayer();
                 }
             }
         }
@@ -404,6 +436,29 @@ public class MainGameActivity extends AppCompatActivity {
                         connectionsClient.sendPayload(hostId, Payload.fromBytes(SerializationHandler.serialize(new NominateMessage(player_list.get(position)))));
                     } catch (IOException e) {
                         Log.d(TAG, e.toString());
+                    }
+                }
+
+                if (mode == NIGHT) {
+                    if (host) {
+                       if (player_map.get(pname).isMafia()) {
+                           mafiaKill = player_list.get(position);
+                           Log.d(TAG, "Killed player: " + mafiaKill);
+                       } else if (player_map.get(pname).isDoctor()) {
+                           doctorSave = player_list.get(position);
+                       }
+                    }
+
+                    else {
+                        try {
+                            if (player.isMafia()) {
+                                connectionsClient.sendPayload(hostId, Payload.fromBytes(SerializationHandler.serialize(new MafiaMessage(player_list.get(position)))));
+                            } else if (player.isDoctor()) {
+                                connectionsClient.sendPayload(hostId, Payload.fromBytes(SerializationHandler.serialize(new DoctorMessage(player_list.get(position)))));
+                            }
+                        } catch (IOException e) {
+                            Log.d(TAG, e.toString());
+                        }
                     }
                 }
             }
@@ -620,6 +675,20 @@ public class MainGameActivity extends AppCompatActivity {
                     if (mode == DAY) {
                         message = new PhaseChangeMessage(NIGHT, player_list);
                     } else {
+                        if (!mafiaKill.isEmpty()) {
+                            if (!doctorSave.isEmpty()) {
+                                if (!mafiaKill.equals(doctorSave)) {
+                                    player_map.remove(mafiaKill);
+                                    player_list.remove(mafiaKill);
+                                    p_list_adapter.notifyDataSetChanged();
+                                }
+                            }
+                            else {
+                                player_list.remove(mafiaKill);
+                                player_map.remove(mafiaKill);
+                                p_list_adapter.notifyDataSetChanged();
+                            }
+                        }
                         message = new PhaseChangeMessage(DAY, player_list);
                     }
 
