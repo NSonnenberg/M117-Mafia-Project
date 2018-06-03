@@ -386,8 +386,10 @@ public class MainGameActivity extends AppCompatActivity {
         curr_activity = this;
 
         //Hide button and listview on startup
-        MAX_COUNTDOWN = getIntent().getIntExtra("timer", 60000);
+        //MAX_COUNTDOWN = getIntent().getIntExtra("timer", 60000);
+        MAX_COUNTDOWN = 15000;
         timeLeftInMilliseconds = MAX_COUNTDOWN;
+
         startgamebutton = (Button)findViewById(R.id.mg_start_game_button);
         list = (ListView)findViewById(R.id.mg_player_list);
         startgamebutton.setVisibility(View.GONE);
@@ -594,6 +596,7 @@ public class MainGameActivity extends AppCompatActivity {
 
     private void nightToDay() {
         listtext.setText("Nominate");
+
         if (!player.isDoctor() && !player.isMafia()) {
             listtext.setVisibility(View.VISIBLE);
             list.setVisibility(View.VISIBLE);
@@ -607,8 +610,9 @@ public class MainGameActivity extends AppCompatActivity {
                 if (player_map.get(player).isMafia()) {
                     mafiaexists = true;
                 }
+                Log.d("MainGameActivity", player_map.get(player).getName() + " " + player_map.get(player).getRole() + " " + player_map.size() + " " + mafiaexists);
             }
-            if (mafiaexists && player_map.size() == 1) {
+            if (mafiaexists && player_list.size() == 1) {
                 EndGame(0);
             } else if (!mafiaexists) {
                 EndGame(1);
@@ -820,6 +824,6 @@ public class MainGameActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed(){
-
+        connectionsClient.stopDiscovery();
     }
 }
