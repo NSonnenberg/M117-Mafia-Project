@@ -601,16 +601,18 @@ public class MainGameActivity extends AppCompatActivity {
         mode = DAY;
         resetTimer();
 
-        boolean mafiaexists = false;
-        for (String player: player_map.keySet()) {
-            if (player_map.get(player).isMafia()) {
-                mafiaexists = true;
+        if(host) {
+            boolean mafiaexists = false;
+            for (String player : player_map.keySet()) {
+                if (player_map.get(player).isMafia()) {
+                    mafiaexists = true;
+                }
             }
-        }
-        if (mafiaexists && player_map.size() == 1) {
-            EndGame(0);
-        } else if (!mafiaexists){
-            EndGame(1);
+            if (mafiaexists && player_map.size() == 1) {
+                EndGame(0);
+            } else if (!mafiaexists) {
+                EndGame(1);
+            }
         }
     }
 
@@ -814,5 +816,10 @@ public class MainGameActivity extends AppCompatActivity {
         }
         updateTimer();
         startTimer();
+    }
+
+    @Override
+    public void onBackPressed(){
+
     }
 }
