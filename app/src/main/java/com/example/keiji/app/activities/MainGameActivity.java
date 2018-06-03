@@ -508,7 +508,7 @@ public class MainGameActivity extends AppCompatActivity {
         Random rand = new Random();
         int mafiaNum = rand.nextInt(numPlayers);
         int doctorNum = -1;
-        if  (numPlayers >  1) {
+        if  (numPlayers >  2) {
             do {
                 doctorNum = rand.nextInt(numPlayers);
             } while (mafiaNum == doctorNum);
@@ -620,6 +620,7 @@ public class MainGameActivity extends AppCompatActivity {
     }
 
     public void EndGame(int winner) {
+        connectionsClient.stopDiscovery();
         for (String player: player_map.keySet()) {
             try {
                 Player playerObj = player_map.get(player);
