@@ -27,21 +27,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CreateGameActivity" />
-        <activity android:name=".JoinGameActivity" />
-        <activity android:name=".SearchGameActivity" />
-        <activity android:name=".PlayerListActivity" />
-        <activity android:name=".MainGameDay" />
-        <activity android:name=".MainGameNight" />
-        <activity android:name=".MainGameActivity" />
-        <activity android:name=".YouWinActivity"></activity>
+        <activity android:name=".CreateGameActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".JoinGameActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".SearchGameActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".PlayerListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".MainGameDay" android:screenOrientation="portrait"/>
+        <activity android:name=".MainGameNight" android:screenOrientation="portrait"/>
+        <activity android:name=".MainGameActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".YouWinActivity" android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

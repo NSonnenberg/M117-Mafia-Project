@@ -508,10 +508,10 @@ public class MainGameActivity extends AppCompatActivity {
         Random rand = new Random();
         int mafiaNum = rand.nextInt(numPlayers);
         int doctorNum = -1;
-        if  (numPlayers >  2) {
-            while (mafiaNum == doctorNum) {
+        if  (numPlayers >  1) {
+            do {
                 doctorNum = rand.nextInt(numPlayers);
-            }
+            } while (mafiaNum == doctorNum);
         }
 
         int i = 0;
@@ -610,7 +610,6 @@ public class MainGameActivity extends AppCompatActivity {
                 if (player_map.get(player).isMafia()) {
                     mafiaexists = true;
                 }
-                Log.d("MainGameActivity", player_map.get(player).getName() + " " + player_map.get(player).getRole() + " " + player_map.size() + " " + mafiaexists);
             }
             if (mafiaexists && player_list.size() == 1) {
                 EndGame(0);
