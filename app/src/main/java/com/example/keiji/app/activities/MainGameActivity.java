@@ -212,9 +212,14 @@ public class MainGameActivity extends AppCompatActivity {
                 else if (received.getClass() == PhaseChangeMessage.class) {
                     PhaseChangeMessage message = (PhaseChangeMessage) received;
 
-                    for (String player_name : player_list) {
-                        if (!message.getNewPlayerList().contains(player_name)) {
-                            player_list.remove(player_name);
+                    for (int i = 0; i < player_list.size(); i++) {
+                        if (!message.getNewPlayerList().contains(player_list.get(i)))
+                        {
+                            if (player_list.get(i).equals(player.getName())) {
+                                killPlayer();
+                            }
+
+                            player_list.remove(i);
                         }
                     }
 
@@ -260,6 +265,10 @@ public class MainGameActivity extends AppCompatActivity {
                     Log.d(TAG, "Received PlayerLynchMessage, dead player is: " + message.getPlayerLynched());
                     player_list.remove(message.getPlayerLynched());
                     p_list_adapter.notifyDataSetChanged();
+
+                    if (player.getName().equals(message.getPlayerLynched())) {
+                        killPlayer();
+                    }
                 }
 
                 else if (received.getClass() == MafiaMessage.class) {
@@ -700,6 +709,21 @@ public class MainGameActivity extends AppCompatActivity {
         } else {
             Log.d("SearchGame", "Guess we're not running the game");
         }
+    }
+
+    public void killPlayer() {
+        if (!host) {
+            countdownText.setVisibility(View.GONE);
+            countdownButton.setVisibility(View.GONE);
+            countdownButtonReset.setVisibility(View.GONE);
+        }
+
+        gmnameview.setVisibility(View.GONE);
+        gmnametext.setVisibility(View.GONE);
+        pnnameview.setVisibility(View.GONE);
+        pnnametext.setVisibility(View.GONE);
+        list.setVisibility(View.GONE);
+        listtext.setText("You are dead");
     }
 
     // Timer functions
