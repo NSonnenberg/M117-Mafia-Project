@@ -12,6 +12,7 @@
     <string name="reset">Reset</string>
     <string name="role">Role</string>
     <string name="length">Round Length</string>
+    <string name="rules_button">Rules</string>
     <string-array name="round_length_list">
         <item>1 minute</item>
         <item>2 minute</item>

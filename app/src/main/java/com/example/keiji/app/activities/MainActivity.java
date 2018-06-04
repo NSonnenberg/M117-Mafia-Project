@@ -20,4 +20,8 @@ public class MainActivity extends AppCompatActivity {
     protected void joinGame(View v) {
         startActivity(new Intent(MainActivity.this, JoinGameActivity.class));
     }
+
+    protected void showRules(View v) {
+        startActivity(new Intent(MainActivity.this, RulesActivity.class));
+    }
 }
