@@ -5,11 +5,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.example.keiji.app.activities.DoctorRules;
-import com.example.keiji.app.activities.GeneralRules;
-import com.example.keiji.app.activities.MafiaRules;
-import com.example.keiji.app.activities.SheriffRules;
-import com.example.keiji.app.activities.VilagerRules;
+import com.example.keiji.app.activities.Rules.DoctorRules;
+import com.example.keiji.app.activities.Rules.GeneralRules;
+import com.example.keiji.app.activities.Rules.MafiaRules;
+import com.example.keiji.app.activities.Rules.SheriffRules;
+import com.example.keiji.app.activities.Rules.VilagerRules;
 
 public class RulesPagerAdapter extends FragmentStatePagerAdapter {
     int mNumOfTabs;

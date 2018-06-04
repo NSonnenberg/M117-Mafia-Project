@@ -32,5 +32,19 @@
         la sed lacus porta porta id non enim. Duis interdum pharetra urna, eu euismod risus facilisis
         sed. Fusce imperdiet lorem neque, id congue ipsum molestie at. Proin laoreet neque in augue dapibu
         s, sit amet fringilla purus faucibus.</string>
+    <string name="rules_general">The Mafia, CS-m117 project presents party game, that takes place in a conflict between the Mafia – the informed minority – and
+        the Innocents – the uninformed majority.
+            This game has two phases; night, when special characters get to make their move, and “day” when Innocents vote to eliminate a
+        Mafiosi suspects that try to hide along them! The game ends when all the Mafia members are eliminated or there are more(smt same) Mafia members than Innocents.
+        The main goal of the Mafia is just too kill evryone, meanwhile citizens jsut want to find who is mafia and get ride of them. *PLEASE DONT PICK N EACH TOHER PHONES DURING THE NIGHT STAGE*
+    </string>
+    <string name="rules_mafia">The Mafia - bad guys of the game, who want to burn down the city and have to kill all innocents first.
+        These players know the identities of their teammates and can determine who will be killed every night.</string>
+    <string name="rules_doctor">The holly Angel of the city! An innocent who plays plays on the good team and puts his goal to protect other incests.
+        Can protect one person every night from being killed by the mafia(CAN PICK HIMSELF ONLY TWICE!)</string>
+    <string name="rules_villager">Innocent people of the game also known as “townspeople”. These players dont have any special roles or powers, they can enjoy and have fun trying to survive and figure out the Mafiosi along them!
+        </string>
+    <string name="rules_sheriff">The Detective of the city! An innocent who plays plays on the good team and puts his main goal to find a mafia.
+        Has special ability to learn the team of one of the players every night. Have to be careful revealing him self, because mafia definitely will try to kill him first!</string>
 </resources>
 
