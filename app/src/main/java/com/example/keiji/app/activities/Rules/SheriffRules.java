@@ -14,8 +14,8 @@ public class SheriffRules extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View result = inflater.inflate(R.layout.fragment_mafia_rules, container, false);
-        TextView rulesText = result.findViewById(R.id.general_view);
+        View result = inflater.inflate(R.layout.fragment_sherif_rules, container, false);
+        TextView rulesText = result.findViewById(R.id.sheriff_view);
         rulesText.setMovementMethod(new ScrollingMovementMethod());
         return result;
     }

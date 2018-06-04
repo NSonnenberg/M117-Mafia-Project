@@ -15,7 +15,7 @@ public class VilagerRules extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_vilager_rules, container, false);
-        TextView rulesText = result.findViewById(R.id.general_view);
+        TextView rulesText = result.findViewById(R.id.villager_view);
         rulesText.setMovementMethod(new ScrollingMovementMethod());
         return result;
     }

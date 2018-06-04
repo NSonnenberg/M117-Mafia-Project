@@ -1,4 +1,4 @@
-package com.example.keiji.app.activities.Rules;
+package com.example.keiji.app.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;

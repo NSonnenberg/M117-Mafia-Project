@@ -15,7 +15,7 @@ public class MafiaRules extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_mafia_rules, container, false);
-        TextView rulesText = result.findViewById(R.id.general_view);
+        TextView rulesText = result.findViewById(R.id.mafia_view);
         rulesText.setMovementMethod(new ScrollingMovementMethod());
         return result;
     }

@@ -44,7 +44,7 @@
         <activity android:name=".MainGameActivity" android:screenOrientation="portrait"/>
         <activity android:name=".YouWinActivity" android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".Rules.RulesActivity"
+            android:name=".RulesActivity"
             android:exported="true" />
     </application>
 
