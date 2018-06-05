@@ -256,7 +256,7 @@ public class MainGameActivity extends AppCompatActivity {
                     } else {
                         builder = new android.app.AlertDialog.Builder(curr_activity);
                     }
-                    builder.setTitle("Game Found")
+                    builder.setTitle("A player has been lynched")
                             .setMessage(message.getPlayerLynched() + " has been killed.")
                             .setPositiveButton("OK", null)
                             .setIcon(android.R.drawable.ic_dialog_alert)
@@ -308,6 +308,7 @@ public class MainGameActivity extends AppCompatActivity {
             if (host) {
                 player_list.add(connectionInfo.getEndpointName());
                 player_map.put(connectionInfo.getEndpointName(), new Player(connectionInfo.getEndpointName(), id));
+                Log.d(TAG, "player_map updated with player: " + connectionInfo.getEndpointName() + " " + player_map.get(connectionInfo.getEndpointName()));
                 p_list_adapter.notifyDataSetChanged();
                 Log.d(TAG, "Accepted connection player_list is now " + player_list.toString());
             }
@@ -438,6 +439,7 @@ public class MainGameActivity extends AppCompatActivity {
             player_list.add(pname);
             startgamebutton.setVisibility(View.VISIBLE); //enables start game button
             player_map.put(pname, player);
+            Log.d(TAG, "player_map updated with player: " + pname + " " + player_map.get(pname));
             list.setVisibility(View.VISIBLE); //enables list view
         }
 
@@ -455,7 +457,8 @@ public class MainGameActivity extends AppCompatActivity {
                 if (mode == DAY) {
                     if (host) {
                         yes++;
-                        no++;
+                        total++;
+                        nominatedPlayer = player_list.get(position);
                         Log.d(TAG, "Host pressed nominate");
                         for (String player : player_map.keySet()) {
                             Log.d(TAG, "Going through players: " + player);
@@ -608,6 +611,10 @@ public class MainGameActivity extends AppCompatActivity {
             list.setVisibility(View.GONE);
         }
 
+        yes = 0;
+        no = 0;
+        total = 0;
+        nominatedPlayer = "";
         mode = NIGHT;
         resetTimer();
     }
@@ -661,6 +668,7 @@ public class MainGameActivity extends AppCompatActivity {
     }
 
     public void checkNominateTotal() {
+        Log.d(TAG, "total = " + total + ", yes = " + yes + ", no = " + no);
         if (total == player_list.size()) {
             if (yes > no) {
                 player_list.remove(nominatedPlayer);
@@ -684,6 +692,7 @@ public class MainGameActivity extends AppCompatActivity {
             yes = 0;
             no = 0;
             total = 0;
+            nominatedPlayer = "";
         }
     }
 
@@ -787,6 +796,8 @@ public class MainGameActivity extends AppCompatActivity {
                             }
                         }
                         message = new PhaseChangeMessage(DAY, player_list);
+                        doctorSave = "";
+                        mafiaKill = "";
                     }
 
                     for (String player_name : player_map.keySet()) {
