@@ -387,8 +387,8 @@ public class MainGameActivity extends AppCompatActivity {
         curr_activity = this;
 
         //Hide button and listview on startup
-        //MAX_COUNTDOWN = getIntent().getIntExtra("timer", 60000);
-        MAX_COUNTDOWN = 15000;
+        MAX_COUNTDOWN = getIntent().getIntExtra("timer", 30000);
+        //MAX_COUNTDOWN = 15000;
         timeLeftInMilliseconds = MAX_COUNTDOWN;
 
         startgamebutton = (Button)findViewById(R.id.mg_start_game_button);
