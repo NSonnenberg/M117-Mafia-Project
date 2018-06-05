@@ -20,6 +20,7 @@ import com.example.keiji.app.objects.DecisionMessage;
 import com.example.keiji.app.objects.DoctorMessage;
 import com.example.keiji.app.objects.EndGameMessage;
 import com.example.keiji.app.objects.Game;
+import com.example.keiji.app.objects.InitMessage;
 import com.example.keiji.app.objects.MafiaMessage;
 import com.example.keiji.app.objects.Message;
 import com.example.keiji.app.objects.NominateMessage;
@@ -133,6 +134,12 @@ public class MainGameActivity extends AppCompatActivity {
                     Log.d(TAG,  "Player List is: " + player_list.toString());
                     Log.d(TAG, "Received player object from " + endpointId + ". Their role was: " + (player.getRole()));
                     playerListToDay();
+                }
+
+                else if (received.getClass() == InitMessage.class) {
+                    InitMessage message = (InitMessage) received;
+                    MAX_COUNTDOWN = message.getRoundLength();
+                    timeLeftInMilliseconds = message.getRoundLength();
                 }
 
                 else if (received.getClass() == NominateMessage.class) {
@@ -315,8 +322,15 @@ public class MainGameActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onConnectionResult(@NonNull String s, @NonNull ConnectionResolution connectionResolution) {
+        public void onConnectionResult(@NonNull String id, @NonNull ConnectionResolution connectionResolution) {
             Log.d(TAG, "Connection established");
+            if (host) {
+                try {
+                    connectionsClient.sendPayload(id, Payload.fromBytes(SerializationHandler.serialize(new InitMessage(player_list, MAX_COUNTDOWN))));
+                } catch (IOException e) {
+                    Log.d(TAG, e.toString());
+                }
+            }
         }
 
         @Override
