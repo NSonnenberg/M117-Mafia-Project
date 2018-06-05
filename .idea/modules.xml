@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://C:\Users\keiji\Documents\CSProjects\CS117\Mafia\M117-Mafia-Project.iml" filepath="C:\Users\keiji\Documents\CSProjects\CS117\Mafia\M117-Mafia-Project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/M117-Mafia-Project.iml" filepath="$PROJECT_DIR$/M117-Mafia-Project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../../keiji/Documents/CSProjects/CS117/Mafia/M117-Mafia-Project.iml" filepath="$PROJECT_DIR$/../../../../keiji/Documents/CSProjects/CS117/Mafia/M117-Mafia-Project.iml" />
       <module fileurl="file://$PROJECT_DIR$/Mafia.iml" filepath="$PROJECT_DIR$/Mafia.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
