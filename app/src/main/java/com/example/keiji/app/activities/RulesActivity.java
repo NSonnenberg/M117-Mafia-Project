@@ -20,7 +20,6 @@ public class RulesActivity extends AppCompatActivity {
         TabLayout tabLayout = findViewById(R.id.rules_tabs);
         tabLayout.addTab(tabLayout.newTab().setText("General Info"));
         tabLayout.addTab(tabLayout.newTab().setText("Doctor"));
-        tabLayout.addTab(tabLayout.newTab().setText("Sheriff"));
         tabLayout.addTab(tabLayout.newTab().setText("Mafia"));
         tabLayout.addTab(tabLayout.newTab().setText("Villager"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
