@@ -453,10 +453,27 @@ public class MainGameActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //Log.d("ListListener", "Clicked item " + position + " " + id);
                 if (mode == DAY) {
-                    try {
-                        connectionsClient.sendPayload(hostId, Payload.fromBytes(SerializationHandler.serialize(new NominateMessage(player_list.get(position)))));
-                    } catch (IOException e) {
-                        Log.d(TAG, e.toString());
+                    if (host) {
+                        yes++;
+                        no++;
+                        Log.d(TAG, "Host pressed nominate");
+                        for (String player : player_map.keySet()) {
+                            Log.d(TAG, "Going through players: " + player);
+                            Player playerObj = player_map.get(player);
+                            if (!playerObj.getName().equals(pname)) {
+                                try {
+                                    connectionsClient.sendPayload(playerObj.getConnectId(), Payload.fromBytes(SerializationHandler.serialize(new NominateMessage(player_list.get(position)))));
+                                } catch (IOException e) {
+                                    Log.d(TAG, e.toString());
+                                }
+                            }
+                        }
+                    } else  {
+                        try {
+                            connectionsClient.sendPayload(hostId, Payload.fromBytes(SerializationHandler.serialize(new NominateMessage(player_list.get(position)))));
+                        } catch (IOException e) {
+                            Log.d(TAG, e.toString());
+                        }
                     }
                 }
 
@@ -503,7 +520,7 @@ public class MainGameActivity extends AppCompatActivity {
     // Change MainGameActivity configuration for running the game
     protected void startGame(View v) {
         connectionsClient.stopAdvertising();
-        int numPlayers = player_map.keySet().size();
+        int numPlayers = player_list.size();
         Log.d(TAG, "numPlayers = " + numPlayers);
         Random rand = new Random();
         int mafiaNum = rand.nextInt(numPlayers);
@@ -514,6 +531,7 @@ public class MainGameActivity extends AppCompatActivity {
             } while (mafiaNum == doctorNum);
         }
 
+        Log.d(TAG, "doctorNum = " + doctorNum);
         int i = 0;
         for (String player_name : player_map.keySet()) {
             Player playerObj = player_map.get(player_name);
@@ -825,5 +843,6 @@ public class MainGameActivity extends AppCompatActivity {
     @Override
     public void onBackPressed(){
         connectionsClient.stopDiscovery();
+        connectionsClient.stopAdvertising();
     }
 }
