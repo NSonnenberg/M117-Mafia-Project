@@ -27,21 +27,24 @@ public class CreateGameActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id){
                 switch(pos) {
                     case 0:
-                        timer = 30000;
+                        timer = 15000;
                         break;
                     case 1:
-                        timer = 60000;
+                        timer = 30000;
                         break;
                     case 2:
-                        timer = 120000;
+                        timer = 60000;
                         break;
                     case 3:
-                        timer = 180000;
+                        timer = 120000;
                         break;
                     case 4:
-                        timer = 240000;
+                        timer = 180000;
                         break;
                     case 5:
+                        timer = 240000;
+                        break;
+                    case 6:
                         timer = 300000;
                         break;
                 }
