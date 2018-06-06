@@ -869,5 +869,7 @@ public class MainGameActivity extends AppCompatActivity {
     public void onBackPressed(){
         connectionsClient.stopDiscovery();
         connectionsClient.stopAdvertising();
+
+        super.onBackPressed();
     }
 }
